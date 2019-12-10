@@ -8,6 +8,7 @@
 
 import UIKit
 import AWSAppSync
+import AWSMobileClient
 
 class ViewController: UIViewController {
     
@@ -74,6 +75,19 @@ class ViewController: UIViewController {
         return button
     }()
     
+    var signOutButton: UIButton = {
+        let button = UIButton()
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.black.cgColor
+        button.layer.cornerRadius = 8
+        button.setTitle("Sign out", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.gray, for: .highlighted)
+        button.addTarget(self, action: #selector(onSignOutButtonTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
@@ -81,7 +95,7 @@ class ViewController: UIViewController {
         
         return tableView
     }()
-  
+    
     let cellId: String = "MyCell"
     
     var appSyncClient: AWSAppSyncClient?
@@ -103,6 +117,7 @@ class ViewController: UIViewController {
         self.button.translatesAutoresizingMaskIntoConstraints = false
         self.queryButton.translatesAutoresizingMaskIntoConstraints = false
         self.subscribeButton.translatesAutoresizingMaskIntoConstraints = false
+        self.signOutButton.translatesAutoresizingMaskIntoConstraints = false
         
         self.view.addSubview(self.nameTextField)
         self.view.addSubview(self.descriptionTextField)
@@ -110,6 +125,7 @@ class ViewController: UIViewController {
         self.view.addSubview(self.button)
         self.view.addSubview(self.queryButton)
         self.view.addSubview(self.subscribeButton)
+        self.view.addSubview(self.signOutButton)
         
         setConstraints()
         
@@ -134,8 +150,32 @@ class ViewController: UIViewController {
         runSubscribe()
     }
     
+    @objc func onSignOutButtonTapped() {
+        // Sign out
+        print("Sign out")
+        signOut()
+    }
+    
+    func signOut() {
+        //        AWSMobileClient.default().signOut()
+        
+        AWSMobileClient.default().signOut(options: SignOutOptions(signOutGlobally: true)) { (error) in
+            print("Error: \(error.debugDescription)")
+            
+            let id = AWSMobileClient.default().isSignedIn
+            
+            print("Signed in \(id)")
+        }
+        
+        DispatchQueue.main.async {
+            let loginViewController = LoginViewController()
+//            viewController.title = "\(AWSMobileClient.default().username ?? "")"
+            self.navigationController?.pushViewController(loginViewController, animated: true)
+        }
+    }
+    
     func runMutation(name: String, description: String) {
-
+        
         let mutationInput = CreateTodoInput(name: name, description: description)
         appSyncClient?.perform(mutation: CreateTodoMutation(input: mutationInput)) {(result, error) in
             self.runQuery()
@@ -161,15 +201,15 @@ class ViewController: UIViewController {
             print("Query complete.")
             self.persons = []
             result?.data?.listTodos?.items?.forEach { ($0?.name ?? "") + " " + ($0?.description ?? "") }
-
-
-                for res in (result?.data?.listTodos?.items!)! {
-
-                    let person: Person = Person(id: res?.id ?? "", name: res?.name ?? "", description: res?.description ?? "")
-
-                    self.persons.append(person)
-                }
-
+            
+            
+            for res in (result?.data?.listTodos?.items!)! {
+                
+                let person: Person = Person(id: res?.id ?? "", name: res?.name ?? "", description: res?.description ?? "")
+                
+                self.persons.append(person)
+            }
+            
             self.tableView.reloadData()
         }
     }
@@ -227,42 +267,58 @@ class ViewController: UIViewController {
     
     func setConstraints() {
         NSLayoutConstraint.activate([
-            self.nameTextField.widthAnchor.constraint(equalToConstant: 250),
+//            self.nameTextField.widthAnchor.constraint(equalToConstant: 250),
             self.nameTextField.heightAnchor.constraint(equalToConstant: 40),
             self.nameTextField.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 100),
-            self.nameTextField.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
+            self.nameTextField.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
+            self.nameTextField.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
         ])
         
         NSLayoutConstraint.activate([
-            self.descriptionTextField.widthAnchor.constraint(equalToConstant: 250),
+//            self.descriptionTextField.widthAnchor.constraint(equalToConstant: 250),
             self.descriptionTextField.heightAnchor.constraint(equalToConstant: 40),
             self.descriptionTextField.topAnchor.constraint(equalTo: self.nameTextField.bottomAnchor, constant: 10),
-            self.descriptionTextField.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
+            self.descriptionTextField.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
+            self.descriptionTextField.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
         ])
         
         NSLayoutConstraint.activate([
             self.button.widthAnchor.constraint(equalToConstant: 150),
-            self.button.heightAnchor.constraint(equalToConstant: 50),
+            self.button.heightAnchor.constraint(equalToConstant: 40),
             self.button.topAnchor.constraint(equalTo: self.descriptionTextField.bottomAnchor, constant: 30),
-            self.button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+//            self.button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+            self.button.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
+            
         ])
         
         NSLayoutConstraint.activate([
             self.queryButton.widthAnchor.constraint(equalToConstant: 150),
-            self.queryButton.heightAnchor.constraint(equalToConstant: 50),
-            self.queryButton.topAnchor.constraint(equalTo: self.button.bottomAnchor, constant: 20),
-            self.queryButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+            self.queryButton.heightAnchor.constraint(equalToConstant: 40),
+            self.queryButton.topAnchor.constraint(equalTo: self.descriptionTextField.bottomAnchor, constant: 30),
+//            self.queryButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+            self.queryButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
+            self.queryButton.trailingAnchor.constraint(greaterThanOrEqualTo: self.button.leadingAnchor, constant: 20)
         ])
         
         NSLayoutConstraint.activate([
             self.subscribeButton.widthAnchor.constraint(equalToConstant: 150),
-            self.subscribeButton.heightAnchor.constraint(equalToConstant: 50),
-            self.subscribeButton.topAnchor.constraint(equalTo: self.queryButton.bottomAnchor, constant: 20),
-            self.subscribeButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+            self.subscribeButton.heightAnchor.constraint(equalToConstant: 40),
+            self.subscribeButton.topAnchor.constraint(equalTo: self.button.bottomAnchor, constant: 20),
+//            self.subscribeButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+            self.subscribeButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
         ])
         
         NSLayoutConstraint.activate([
-            self.tableView.topAnchor.constraint(equalTo: self.subscribeButton.bottomAnchor, constant: 20),
+            self.signOutButton.widthAnchor.constraint(equalToConstant: 150),
+            self.signOutButton.heightAnchor.constraint(equalToConstant: 40),
+            self.signOutButton.topAnchor.constraint(equalTo: self.queryButton.bottomAnchor, constant: 20),
+//            self.signOutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            self.signOutButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
+            self.signOutButton.trailingAnchor.constraint(greaterThanOrEqualTo: self.subscribeButton.leadingAnchor, constant: 20)
+        ])
+        
+        NSLayoutConstraint.activate([
+            self.tableView.topAnchor.constraint(equalTo: self.signOutButton.bottomAnchor, constant: 20),
             self.tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
             self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
             self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -10)
@@ -282,7 +338,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let person = persons[indexPath.row] //.sorted(by: { $0.name?.lowercased() < $1.name?.lowercased() })         //[indexPath.row]
         
         cell.textLabel?.adjustsFontSizeToFitWidth = true
-
+        
         cell.setTextToLabels(id: person.id ?? "", name: person.name ?? "", description: person.description ?? "")
         
         return cell

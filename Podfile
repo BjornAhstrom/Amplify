@@ -6,6 +6,9 @@ target 'TestingAmplify' do
   use_frameworks!
     pod 'AWSCore'
     pod 'AWSAppSync'
+    pod 'AWSMobileClient'
+    pod 'AWSAuthUI'
+    pod 'AWSUserPoolsSignIn'
 
   # Pods for TestingAmplify
 

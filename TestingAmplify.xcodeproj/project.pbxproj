@@ -11,6 +11,8 @@
 		1E04A7D723994CA8003A19AA /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E04A7D623994CA8003A19AA /* API.swift */; };
 		1E04A7D923994D93003A19AA /* PersonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E04A7D823994D93003A19AA /* PersonTableViewCell.swift */; };
 		1E04A7DC23994DBF003A19AA /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E04A7DB23994DBF003A19AA /* Person.swift */; };
+		1E0C1E3A239FAF7B004096CC /* SplashScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0C1E39239FAF7B004096CC /* SplashScreenViewController.swift */; };
+		1E0C1E3C239FAF84004096CC /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0C1E3B239FAF84004096CC /* LoginViewController.swift */; };
 		1EE67C4C2398338A004DF2B4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */; };
 		1EE67C4E2398338A004DF2B4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */; };
 		1EE67C502398338A004DF2B4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4F2398338A004DF2B4 /* ViewController.swift */; };
@@ -26,6 +28,8 @@
 		1E04A7D623994CA8003A19AA /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		1E04A7D823994D93003A19AA /* PersonTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PersonTableViewCell.swift; path = "../../Library/Mobile Documents/com~apple~CloudDocs/.Trash/TestingAmplify/TestingAmplify/PersonTableViewCell.swift"; sourceTree = "<group>"; };
 		1E04A7DB23994DBF003A19AA /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		1E0C1E39239FAF7B004096CC /* SplashScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SplashScreenViewController.swift; path = ../../Desktop/Amplify/TestingAmplify/SplashScreenViewController.swift; sourceTree = "<group>"; };
+		1E0C1E3B239FAF84004096CC /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ../../Desktop/Amplify/TestingAmplify/LoginViewController.swift; sourceTree = "<group>"; };
 		1EE67C482398338A004DF2B4 /* TestingAmplify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestingAmplify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +88,8 @@
 				1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */,
 				1EE67C4F2398338A004DF2B4 /* ViewController.swift */,
 				1E04A7D823994D93003A19AA /* PersonTableViewCell.swift */,
+				1E0C1E39239FAF7B004096CC /* SplashScreenViewController.swift */,
+				1E0C1E3B239FAF84004096CC /* LoginViewController.swift */,
 				1EE67C542398338D004DF2B4 /* Assets.xcassets */,
 				1EE67C562398338D004DF2B4 /* LaunchScreen.storyboard */,
 				1EE67C592398338D004DF2B4 /* Info.plist */,
@@ -225,7 +231,9 @@
 			files = (
 				1E04A7DC23994DBF003A19AA /* Person.swift in Sources */,
 				1EE67C502398338A004DF2B4 /* ViewController.swift in Sources */,
+				1E0C1E3A239FAF7B004096CC /* SplashScreenViewController.swift in Sources */,
 				1EE67C4C2398338A004DF2B4 /* AppDelegate.swift in Sources */,
+				1E0C1E3C239FAF84004096CC /* LoginViewController.swift in Sources */,
 				1E04A7D723994CA8003A19AA /* API.swift in Sources */,
 				1E04A7D923994D93003A19AA /* PersonTableViewCell.swift in Sources */,
 				1EE67C4E2398338A004DF2B4 /* SceneDelegate.swift in Sources */,
