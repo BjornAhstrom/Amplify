@@ -4,6 +4,7 @@ query GetTodo($id: ID!) {
     id
     name
     description
+    owner
   }
 }
 query ListTodos(
@@ -16,6 +17,7 @@ query ListTodos(
       id
       name
       description
+      owner
     }
     nextToken
   }

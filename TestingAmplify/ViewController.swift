@@ -99,6 +99,7 @@ class ViewController: UIViewController {
     let cellId: String = "MyCell"
     
     var appSyncClient: AWSAppSyncClient?
+    
     var discard: Cancellable?
     
     var persons: [Person] = []
@@ -131,6 +132,10 @@ class ViewController: UIViewController {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
+        
+    
+        
+        
         
         self.hideKeyBoard()
     }
@@ -168,9 +173,11 @@ class ViewController: UIViewController {
         }
         
         DispatchQueue.main.async {
-            let loginViewController = LoginViewController()
-//            viewController.title = "\(AWSMobileClient.default().username ?? "")"
-            self.navigationController?.pushViewController(loginViewController, animated: true)
+//            let loginViewController = LoginViewController()
+////            viewController.title = "\(AWSMobileClient.default().username ?? "")"
+//            self.navigationController?.pushViewController(loginViewController, animated: true)
+            
+            self.dismiss(animated: true, completion: nil)
         }
     }
     
@@ -193,21 +200,22 @@ class ViewController: UIViewController {
     }
     
     func runQuery() {
+        persons = []
         appSyncClient?.fetch(query: ListTodosQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "")
                 return
             }
             print("Query complete.")
-            self.persons = []
             result?.data?.listTodos?.items?.forEach { ($0?.name ?? "") + " " + ($0?.description ?? "") }
             
             
-            for res in (result?.data?.listTodos?.items!)! {
-                
-                let person: Person = Person(id: res?.id ?? "", name: res?.name ?? "", description: res?.description ?? "")
-                
-                self.persons.append(person)
+            DispatchQueue.main.async {
+                for res in (result?.data?.listTodos?.items ?? []) {
+
+                    let person: Person = Person(id: res?.id ?? "", name: res?.name ?? "", description: res?.description ?? "")
+                     self.persons.append(person)
+                }
             }
             
             self.tableView.reloadData()

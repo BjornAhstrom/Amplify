@@ -27,6 +27,13 @@
         "categories": {
             "auth": {
                 "amplify807fff68": {}
+            },
+            "function": {
+                "amplify807fff68CustomMessage": {
+                    "REDIRECTURL": "",
+                    "EMAILSUBJECT": "http://sum.network/",
+                    "EMAILMESSAGE": ""
+                }
             }
         }
     }
