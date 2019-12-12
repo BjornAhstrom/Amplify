@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.windowScene = windowsScene
         
-        let viewController = LoginViewController() //ViewController() LoginViewController()
+        let viewController = ViewController() //ViewController() LoginViewController()
         
         window?.rootViewController = splashScreen //ViewController()
         window?.makeKeyAndVisible()

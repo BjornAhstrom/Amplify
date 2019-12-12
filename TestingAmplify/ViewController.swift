@@ -75,18 +75,18 @@ class ViewController: UIViewController {
         return button
     }()
     
-    var signOutButton: UIButton = {
-        let button = UIButton()
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.black.cgColor
-        button.layer.cornerRadius = 8
-        button.setTitle("Sign out", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(.gray, for: .highlighted)
-        button.addTarget(self, action: #selector(onSignOutButtonTapped), for: .touchUpInside)
-        
-        return button
-    }()
+//    var signOutButton: UIButton = {
+//        let button = UIButton()
+//        button.layer.borderWidth = 1
+//        button.layer.borderColor = UIColor.black.cgColor
+//        button.layer.cornerRadius = 8
+//        button.setTitle("Sign out", for: .normal)
+//        button.setTitleColor(.black, for: .normal)
+//        button.setTitleColor(.gray, for: .highlighted)
+//        button.addTarget(self, action: #selector(onSignOutButtonTapped), for: .touchUpInside)
+//
+//        return button
+//    }()
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -96,17 +96,22 @@ class ViewController: UIViewController {
         return tableView
     }()
     
+    let signOutButton = UIBarButtonItem(title: "SignOut", style: .done, target: self, action: #selector(onSignOutButtonTapped))
+    let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(onEditButtonTapped))
     let cellId: String = "MyCell"
     
     var appSyncClient: AWSAppSyncClient?
-    
     var discard: Cancellable?
-    
     var persons: [Person] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.showSignInScreen()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         self.view.backgroundColor = .white
         
         self.tableView.delegate = self
@@ -118,7 +123,7 @@ class ViewController: UIViewController {
         self.button.translatesAutoresizingMaskIntoConstraints = false
         self.queryButton.translatesAutoresizingMaskIntoConstraints = false
         self.subscribeButton.translatesAutoresizingMaskIntoConstraints = false
-        self.signOutButton.translatesAutoresizingMaskIntoConstraints = false
+//        self.signOutButton.translatesAutoresizingMaskIntoConstraints = false
         
         self.view.addSubview(self.nameTextField)
         self.view.addSubview(self.descriptionTextField)
@@ -126,16 +131,19 @@ class ViewController: UIViewController {
         self.view.addSubview(self.button)
         self.view.addSubview(self.queryButton)
         self.view.addSubview(self.subscribeButton)
-        self.view.addSubview(self.signOutButton)
+//        self.view.addSubview(self.signOutButton)
+        
+        self.navigationItem.leftBarButtonItem = signOutButton
+        self.navigationItem.rightBarButtonItem = editButton
         
         setConstraints()
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
         
-    
-        
-        
+        DispatchQueue.main.async {
+            self.runQuery()
+        }
         
         self.hideKeyBoard()
     }
@@ -161,31 +169,90 @@ class ViewController: UIViewController {
         signOut()
     }
     
+    @objc func onEditButtonTapped() {
+        print("Edit")
+    }
+    
+    func showSignInScreen() {
+        
+        AWSMobileClient.default().initialize { (userState, error) in
+            if let userState = userState {
+                switch(userState){
+                case .signedIn:
+                    DispatchQueue.main.async {
+
+                    }
+                case .signedOut:
+                   AWSMobileClient.default().showSignIn(navigationController: self.navigationController!, signInUIOptions: SignInUIOptions(canCancel: false, logoImage: UIImage(named: "sum logo"), backgroundColor: UIColor.black)) { (result, err) in
+                        if let result = result {
+                            switch (result) {
+                            case .signedIn:
+                                print("SignedIn")
+                                
+                            case .signedOut:
+                                print("SignedOut")
+                            default:
+                                AWSMobileClient.default().signOut()
+                            }
+                        } else if let error = err {
+                            print(error.localizedDescription)
+                        }
+                    }
+                default:
+                    AWSMobileClient.default().signOut()
+                }
+
+            } else if let error = error {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     func signOut() {
-        //        AWSMobileClient.default().signOut()
+        self.showSpinner(onView: self.view)
         
         AWSMobileClient.default().signOut(options: SignOutOptions(signOutGlobally: true)) { (error) in
             print("Error: \(error.debugDescription)")
-            
-            let id = AWSMobileClient.default().isSignedIn
-            
-            print("Signed in \(id)")
         }
         
         DispatchQueue.main.async {
-//            let loginViewController = LoginViewController()
-////            viewController.title = "\(AWSMobileClient.default().username ?? "")"
-//            self.navigationController?.pushViewController(loginViewController, animated: true)
-            
-            self.dismiss(animated: true, completion: nil)
+            do {
+                try self.appSyncClient?.clearCaches()
+                
+            } catch let error {
+                print(error.localizedDescription)
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(1500), execute: {
+            self.showSignInScreen()
+            self.removeSpinner()
+        })
+    }
+    
+    func deleteMutation() {
+        let deleteMutation = DeleteTodoInput(id: "")
+        appSyncClient?.perform(mutation: DeleteTodoMutation(input: deleteMutation)) {(result, error) in
+            if let error = error as? AWSAppSyncClientError {
+                print("Error occurred: \(error.localizedDescription )")
+            }
+            if let resultError = result?.errors {
+                print("Error saving the item on server: \(resultError)")
+            }
+            print("Delete complete.")
+        }
+        
+        DispatchQueue.main.async {
+            self.runQuery()
         }
     }
+
     
     func runMutation(name: String, description: String) {
         
         let mutationInput = CreateTodoInput(name: name, description: description)
         appSyncClient?.perform(mutation: CreateTodoMutation(input: mutationInput)) {(result, error) in
-            self.runQuery()
+            
             if let error = error as? AWSAppSyncClientError {
                 print("Error occurred: \(error.localizedDescription )")
             }
@@ -195,12 +262,16 @@ class ViewController: UIViewController {
             }
             print("Mutation complete.")
         }
+        
+        DispatchQueue.main.async {
+            self.runQuery()
+        }
         nameTextField.text = ""
         descriptionTextField.text = ""
     }
     
     func runQuery() {
-        persons = []
+        self.persons = []
         appSyncClient?.fetch(query: ListTodosQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "")
@@ -316,17 +387,17 @@ class ViewController: UIViewController {
             self.subscribeButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
         ])
         
-        NSLayoutConstraint.activate([
-            self.signOutButton.widthAnchor.constraint(equalToConstant: 150),
-            self.signOutButton.heightAnchor.constraint(equalToConstant: 40),
-            self.signOutButton.topAnchor.constraint(equalTo: self.queryButton.bottomAnchor, constant: 20),
-//            self.signOutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-            self.signOutButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
-            self.signOutButton.trailingAnchor.constraint(greaterThanOrEqualTo: self.subscribeButton.leadingAnchor, constant: 20)
-        ])
+//        NSLayoutConstraint.activate([
+//            self.signOutButton.widthAnchor.constraint(equalToConstant: 150),
+//            self.signOutButton.heightAnchor.constraint(equalToConstant: 40),
+//            self.signOutButton.topAnchor.constraint(equalTo: self.queryButton.bottomAnchor, constant: 20),
+////            self.signOutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+//            self.signOutButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
+//            self.signOutButton.trailingAnchor.constraint(greaterThanOrEqualTo: self.subscribeButton.leadingAnchor, constant: 20)
+//        ])
         
         NSLayoutConstraint.activate([
-            self.tableView.topAnchor.constraint(equalTo: self.signOutButton.bottomAnchor, constant: 20),
+            self.tableView.topAnchor.constraint(equalTo: self.subscribeButton.bottomAnchor, constant: 20),
             self.tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
             self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
             self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -10)
@@ -356,6 +427,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         return 105
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let person = persons[indexPath.row]
+        
+        print(person.id)
+
+    }
 }
 
 // MARK: Hide keyboard
@@ -368,6 +446,33 @@ extension UIViewController {
     
     @objc func dissmissKeyboard() {
         view.endEditing(true)
+    }
+}
+
+var vSpinner : UIView?
+
+// UIActivityIndicator
+extension UIViewController {
+    func showSpinner(onView : UIView) {
+        let spinnerView = UIView.init(frame: onView.bounds)
+        spinnerView.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+        let ai = UIActivityIndicatorView.init(style: .whiteLarge)
+        ai.startAnimating()
+        ai.center = spinnerView.center
+        
+        DispatchQueue.main.async {
+            spinnerView.addSubview(ai)
+            onView.addSubview(spinnerView)
+        }
+        
+        vSpinner = spinnerView
+    }
+    
+    func removeSpinner() {
+        DispatchQueue.main.async {
+            vSpinner?.removeFromSuperview()
+            vSpinner = nil
+        }
     }
 }
 

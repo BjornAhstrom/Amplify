@@ -9,7 +9,7 @@ target 'TestingAmplify' do
     pod 'AWSMobileClient'
     pod 'AWSAuthUI'
     pod 'AWSUserPoolsSignIn'
-
+    
   # Pods for TestingAmplify
 
 end

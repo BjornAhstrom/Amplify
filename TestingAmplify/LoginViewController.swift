@@ -14,15 +14,23 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.backgroundColor = .orange
 
         AWSMobileClient.default().initialize { (userState, error) in
             if let userState = userState {
                 switch(userState){
                 case .signedIn:
                     DispatchQueue.main.async {
-                        let viewController = ViewController()
-                        viewController.title = "\(AWSMobileClient.default().username ?? "")"
-                        self.navigationController?.pushViewController(viewController, animated: true)
+                    
+//                        let viewController = ViewController()
+//                        viewController.title = "\(AWSMobileClient.default().username ?? "")"
+                        
+//                        viewController.modalTransitionStyle = .crossDissolve
+//                        self.present(viewController, animated: true)
+                        
+                        
+//                        self.navigationController?.pushViewController(viewController, animated: true)
                         
 //                        let popup = ViewController()
 //                        self.addChild(popup)
@@ -33,11 +41,7 @@ class LoginViewController: UIViewController {
                 case .signedOut:
                     AWSMobileClient.default().showSignIn(navigationController: self.navigationController!, { (userState, error) in
                         if(error == nil){       //Successful signin
-                            DispatchQueue.main.async {
-//                                let viewController = ViewController()
-//                                viewController.title = "\(AWSMobileClient.default().username ?? "")"
-//                                self.navigationController?.pushViewController(viewController, animated: true)
-                            }
+                           
                         }
                     })
                 default:
