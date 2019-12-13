@@ -1,4 +1,4 @@
-type Todo
+type User
   @model
   @auth(
     rules: [
@@ -7,6 +7,12 @@ type Todo
 {
   id: ID!
   name: String!
-  description: String
+  surname: String!
   owner: String
+  codeList: [codeLanguages]
+}
+
+type codeLanguages @model @auth(rules: [{allow: owner, operations: [create, update, delete, read]}]) {
+  id: ID!
+  type: String!
 }

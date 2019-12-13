@@ -1,5 +1,5 @@
 //
-//  Person.swift
+//  Type.swift
 //  amplifyTest
 //
 //  Created by Björn Åhström on 2019-12-04.
@@ -8,12 +8,7 @@
 
 import Foundation
 
-struct Persons {
-    var persons: [Person] = []
-}
-
-struct Person {
+struct Type {
     let id: String?
-    let name: String?
-    let description: String?
+    let type: String?
 }

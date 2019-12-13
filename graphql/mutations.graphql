@@ -1,34 +1,79 @@
 # this is an auto generated file. This will be overwritten
-mutation CreateTodo(
-  $input: CreateTodoInput!
-  $condition: ModelTodoConditionInput
+mutation CreateUser(
+  $input: CreateUserInput!
+  $condition: ModelUserConditionInput
 ) {
-  createTodo(input: $input, condition: $condition) {
+  createUser(input: $input, condition: $condition) {
     id
     name
-    description
+    surname
+    owner
+    codeList {
+      id
+      type
+      owner
+    }
+  }
+}
+mutation UpdateUser(
+  $input: UpdateUserInput!
+  $condition: ModelUserConditionInput
+) {
+  updateUser(input: $input, condition: $condition) {
+    id
+    name
+    surname
+    owner
+    codeList {
+      id
+      type
+      owner
+    }
+  }
+}
+mutation DeleteUser(
+  $input: DeleteUserInput!
+  $condition: ModelUserConditionInput
+) {
+  deleteUser(input: $input, condition: $condition) {
+    id
+    name
+    surname
+    owner
+    codeList {
+      id
+      type
+      owner
+    }
+  }
+}
+mutation CreateCodeLanguages(
+  $input: CreateCodeLanguagesInput!
+  $condition: ModelcodeLanguagesConditionInput
+) {
+  createCodeLanguages(input: $input, condition: $condition) {
+    id
+    type
     owner
   }
 }
-mutation UpdateTodo(
-  $input: UpdateTodoInput!
-  $condition: ModelTodoConditionInput
+mutation UpdateCodeLanguages(
+  $input: UpdateCodeLanguagesInput!
+  $condition: ModelcodeLanguagesConditionInput
 ) {
-  updateTodo(input: $input, condition: $condition) {
+  updateCodeLanguages(input: $input, condition: $condition) {
     id
-    name
-    description
+    type
     owner
   }
 }
-mutation DeleteTodo(
-  $input: DeleteTodoInput!
-  $condition: ModelTodoConditionInput
+mutation DeleteCodeLanguages(
+  $input: DeleteCodeLanguagesInput!
+  $condition: ModelcodeLanguagesConditionInput
 ) {
-  deleteTodo(input: $input, condition: $condition) {
+  deleteCodeLanguages(input: $input, condition: $condition) {
     id
-    name
-    description
+    type
     owner
   }
 }

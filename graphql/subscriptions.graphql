@@ -1,25 +1,61 @@
 # this is an auto generated file. This will be overwritten
-subscription OnCreateTodo($owner: String!) {
-  onCreateTodo(owner: $owner) {
+subscription OnCreateUser($owner: String!) {
+  onCreateUser(owner: $owner) {
     id
     name
-    description
+    surname
+    owner
+    codeList {
+      id
+      type
+      owner
+    }
+  }
+}
+subscription OnUpdateUser($owner: String!) {
+  onUpdateUser(owner: $owner) {
+    id
+    name
+    surname
+    owner
+    codeList {
+      id
+      type
+      owner
+    }
+  }
+}
+subscription OnDeleteUser($owner: String!) {
+  onDeleteUser(owner: $owner) {
+    id
+    name
+    surname
+    owner
+    codeList {
+      id
+      type
+      owner
+    }
+  }
+}
+subscription OnCreateCodeLanguages($owner: String!) {
+  onCreateCodeLanguages(owner: $owner) {
+    id
+    type
     owner
   }
 }
-subscription OnUpdateTodo($owner: String!) {
-  onUpdateTodo(owner: $owner) {
+subscription OnUpdateCodeLanguages($owner: String!) {
+  onUpdateCodeLanguages(owner: $owner) {
     id
-    name
-    description
+    type
     owner
   }
 }
-subscription OnDeleteTodo($owner: String!) {
-  onDeleteTodo(owner: $owner) {
+subscription OnDeleteCodeLanguages($owner: String!) {
+  onDeleteCodeLanguages(owner: $owner) {
     id
-    name
-    description
+    type
     owner
   }
 }
