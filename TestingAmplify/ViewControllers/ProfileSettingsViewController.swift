@@ -27,14 +27,15 @@ class ProfileSettingsViewController: UIViewController {
         label.font = .boldSystemFont(ofSize: 25)
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.text = "\(NSLocalizedString("Profile", comment: ""))"
+        label.text = "Profile settings"
         
         return label
     }()
     
     var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .black
+        textField.backgroundColor = .clear
+        textField.textColor = .white
         textField.borderStyle = .roundedRect
         textField.clearButtonMode = UITextField.ViewMode.whileEditing
         textField.keyboardType = UIKeyboardType.default
@@ -46,7 +47,8 @@ class ProfileSettingsViewController: UIViewController {
     
     var surnameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .black
+        textField.backgroundColor = .clear
+        textField.textColor = .white
         textField.borderStyle = .roundedRect
         textField.clearButtonMode = UITextField.ViewMode.whileEditing
         textField.keyboardType = UIKeyboardType.default

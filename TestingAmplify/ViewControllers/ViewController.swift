@@ -38,12 +38,18 @@ class ViewController: UIViewController {
     
     var mutationLanguageTextField: UITextField = {
         let textField = UITextField()
+        textField.backgroundColor = .clear
         textField.textColor = .black
-        textField.borderStyle = .roundedRect
+        textField.layer.borderColor = UIColor.gray.cgColor
+        textField.layer.borderWidth = 1
+        textField.layer.cornerRadius = 5
+        textField.layer.masksToBounds = true
         textField.clearButtonMode = UITextField.ViewMode.whileEditing
         textField.keyboardType = UIKeyboardType.default
         textField.returnKeyType = UIReturnKeyType.done
-        textField.placeholder = "Code language"
+        textField.attributedPlaceholder = NSAttributedString(string: "Code language",
+        attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
+//        textField.placeholder = "Code language"
         
         return textField
     }()
@@ -159,6 +165,7 @@ class ViewController: UIViewController {
     @objc func updateNameAndSurname() {
         DispatchQueue.main.async {
             self.runUserQuery()
+            self.removeSpinner()
         }
     }
     
@@ -191,20 +198,17 @@ class ViewController: UIViewController {
     }
     
     func showSignInScreen() {
-        self.showSpinner(onView: self.view)
         AWSMobileClient.default().initialize { (userState, error) in
             if let userState = userState {
                 switch(userState){
                 case .signedIn:
                     print("SignedIn")
-                    self.removeSpinner()
                 case .signedOut:
                     AWSMobileClient.default().showSignIn(navigationController: self.navigationController!, signInUIOptions: SignInUIOptions(canCancel: false, logoImage: UIImage(named: "sum logo"), backgroundColor: UIColor.black)) { (result, err) in
                         if let result = result {
                             switch (result) {
                             case .signedIn:
                                 print("SignedIn")
-                                self.removeSpinner()
                                 
                             case .signedOut:
                                 print("SignedOut")
@@ -307,8 +311,6 @@ class ViewController: UIViewController {
     }
     
     func runUserQuery() {
-        self.showSpinner(onView: self.view)
-        
         appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "")
@@ -462,8 +464,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: self.cellId) as? PersonTableViewCell else {
             fatalError()
         }
+        
         let t = type[indexPath.row]
         
+        cell.backgroundColor = .clear
         cell.textLabel?.adjustsFontSizeToFitWidth = true
         
         cell.setTextToLabels(type: "\(indexPath.row + 1): \(t.type ?? "")")
