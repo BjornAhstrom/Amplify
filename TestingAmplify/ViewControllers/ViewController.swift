@@ -269,6 +269,8 @@ class ViewController: UIViewController {
         })
     }
     func runUpdateTypeMutation(id: String, typeName: String) {
+        self.showSpinner(onView: self.view)
+        
         let updateMutation = UpdateCodeLanguagesInput(id: id, type: typeName)
         appSyncClient?.perform(mutation: UpdateCodeLanguagesMutation(input: updateMutation)) {(result, error) in
             
@@ -281,13 +283,15 @@ class ViewController: UIViewController {
             }
             print("Mutation complete.")
         }
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(700)) {
             self.mutationLanguageTextField.text = ""
             self.runtypeQuery()
         }
     }
     
     func deleteTypeMutation(id: String) {
+        self.showSpinner(onView: self.view)
+        
         let deleteMutation = DeleteCodeLanguagesInput(id: id)
         appSyncClient?.perform(mutation: DeleteCodeLanguagesMutation(input: deleteMutation)) {(result, error) in
             if let error = error as? AWSAppSyncClientError {
@@ -298,13 +302,15 @@ class ViewController: UIViewController {
             }
             print("Delete complete.")
         }
-        
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(700)) {
+            self.mutationLanguageTextField.text = ""
             self.runtypeQuery()
         }
     }
     
     func runCodeLanguagesMutation(language: String) {
+        self.showSpinner(onView: self.view)
+        
         let mutationInput = CreateCodeLanguagesInput(type: language)
         appSyncClient?.perform(mutation: CreateCodeLanguagesMutation(input: mutationInput)) {(result, error) in
             if let error = error as? AWSAppSyncClientError {
@@ -316,14 +322,15 @@ class ViewController: UIViewController {
             }
             print("Mutation complete.")
         }
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(700)) {
             self.mutationLanguageTextField.text = ""
             self.runtypeQuery()
-            self.tableView.reloadData()
         }
     }
     
     func runUserQuery() {
+        self.showSpinner(onView: self.view)
+        
         appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "")
@@ -336,13 +343,13 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.nameTextLabel.text = res?.name
                     self.surnameTextLabel.text = res?.surname
+                    self.removeSpinner()
                 }
             }
         }
     }
     
     func runtypeQuery() {
-        
         appSyncClient?.fetch(query: ListCodeLanguagessQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "")
