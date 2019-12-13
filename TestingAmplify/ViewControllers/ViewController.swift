@@ -61,19 +61,6 @@ class ViewController: UIViewController {
         return button
     }()
     
-    //    var mutationUserButton: UIButton = {
-    //        let button = UIButton()
-    //        button.layer.borderWidth = 1
-    //        button.layer.borderColor = UIColor.black.cgColor
-    //        button.layer.cornerRadius = 8
-    //        button.setTitle("Save", for: .normal)
-    //        button.setTitleColor(.black, for: .normal)
-    //        button.setTitleColor(.gray, for: .highlighted)
-    //        button.addTarget(self, action: #selector(onMutationUserTapped), for: .touchUpInside)
-    //
-    //        return button
-    //    }()
-    
     var updateTypeButton: UIButton = {
         let button = UIButton()
         button.layer.borderColor = UIColor.black.cgColor
@@ -117,7 +104,7 @@ class ViewController: UIViewController {
     var typeId: String = ""
     var appSyncClient: AWSAppSyncClient?
     var discard: Cancellable?
-    var type: [Type] = []
+    var type: [Language] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -134,7 +121,6 @@ class ViewController: UIViewController {
         self.mutationLanguageTextField.translatesAutoresizingMaskIntoConstraints = false
         self.tableView.translatesAutoresizingMaskIntoConstraints = false
         self.mutationButton.translatesAutoresizingMaskIntoConstraints = false
-        //        self.mutationUserButton.translatesAutoresizingMaskIntoConstraints = false
         self.updateTypeButton.translatesAutoresizingMaskIntoConstraints = false
         self.deleteTypeButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -143,7 +129,6 @@ class ViewController: UIViewController {
         self.view.addSubview(self.mutationLanguageTextField)
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.mutationButton)
-        //        self.view.addSubview(self.mutationUserButton)
         self.view.addSubview(self.updateTypeButton)
         self.view.addSubview(self.deleteTypeButton)
         
@@ -153,13 +138,6 @@ class ViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = editButton
         
         setConstraints()
-        
-        
-        
-        //        DispatchQueue.main.async {
-        //            self.nameTextLabel.text = UserDefaults.standard.string(forKey: "name") ?? ""
-        //            self.surnameTextLabel.text = UserDefaults.standard.string(forKey: "surname") ?? ""
-        //        }
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
@@ -218,7 +196,7 @@ class ViewController: UIViewController {
             if let userState = userState {
                 switch(userState){
                 case .signedIn:
-                    print("!!!!!!!!!!! SignedIn")
+                    print("SignedIn")
                     self.removeSpinner()
                 case .signedOut:
                     AWSMobileClient.default().showSignIn(navigationController: self.navigationController!, signInUIOptions: SignInUIOptions(canCancel: false, logoImage: UIImage(named: "sum logo"), backgroundColor: UIColor.black)) { (result, err) in
@@ -362,7 +340,7 @@ class ViewController: UIViewController {
             DispatchQueue.main.async {
                 for res in (result?.data?.listCodeLanguagess?.items ?? []) {
                     
-                    let type: Type = Type(id: res?.id, type: res?.type)
+                    let type: Language = Language(id: res?.id, type: res?.type)
                     self.type.append(type)
                 }
                 self.tableView.reloadData()
@@ -402,6 +380,7 @@ class ViewController: UIViewController {
         }, resultHandler: { (result, error) in
             if let result = result {
                 print("Added Todo Response from service: \(String(describing: result.data?.createUser?.name))")
+                
                 //Now remove the outdated entry in cache from optimistic write
                 let _ = self.appSyncClient?.store?.withinReadWriteTransaction { transaction in
                     try transaction.update(query: ListUsersQuery())
@@ -424,7 +403,6 @@ class ViewController: UIViewController {
     
     func setConstraints() {
         NSLayoutConstraint.activate([
-            //            self.nameTextField.widthAnchor.constraint(equalToConstant: 250),
             self.nameTextLabel.heightAnchor.constraint(equalToConstant: 40),
             self.nameTextLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 100),
             self.nameTextLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
@@ -432,31 +410,20 @@ class ViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            //            self.descriptionTextField.widthAnchor.constraint(equalToConstant: 250),
             self.surnameTextLabel.heightAnchor.constraint(equalToConstant: 40),
             self.surnameTextLabel.topAnchor.constraint(equalTo: self.nameTextLabel.bottomAnchor, constant: 10),
             self.surnameTextLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
             self.surnameTextLabel.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
         ])
         
-        //        NSLayoutConstraint.activate([
-        //            self.mutationUserButton.widthAnchor.constraint(equalToConstant: 150),
-        //            self.mutationUserButton.heightAnchor.constraint(equalToConstant: 40),
-        //            self.mutationUserButton.topAnchor.constraint(equalTo: self.surnameTextLabel.bottomAnchor, constant: 40),
-        //            self.mutationUserButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-        //        ])
-        
         NSLayoutConstraint.activate([
             self.mutationButton.widthAnchor.constraint(equalToConstant: 40),
             self.mutationButton.heightAnchor.constraint(equalToConstant: 40),
             self.mutationButton.topAnchor.constraint(equalTo: self.surnameTextLabel.bottomAnchor, constant: 40),
-            // self.button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-            // self.mutationButton.leadingAnchor.constraint(greaterThanOrEqualTo: self.mutationTextField.leadingAnchor, constant: 20),
             self.mutationButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
         ])
         
         NSLayoutConstraint.activate([
-            // self.descriptionTextField.widthAnchor.constraint(equalToConstant: 250),
             self.mutationLanguageTextField.heightAnchor.constraint(equalToConstant: 40),
             self.mutationLanguageTextField.topAnchor.constraint(equalTo: self.surnameTextLabel.bottomAnchor, constant: 40),
             self.mutationLanguageTextField.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
@@ -476,15 +443,6 @@ class ViewController: UIViewController {
             self.deleteTypeButton.topAnchor.constraint(equalTo: self.mutationLanguageTextField.bottomAnchor, constant: 20),
             self.deleteTypeButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
         ])
-        
-        //        NSLayoutConstraint.activate([
-        //            self.signOutButton.widthAnchor.constraint(equalToConstant: 150),
-        //            self.signOutButton.heightAnchor.constraint(equalToConstant: 40),
-        //            self.signOutButton.topAnchor.constraint(equalTo: self.queryButton.bottomAnchor, constant: 20),
-        ////            self.signOutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        //            self.signOutButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
-        //            self.signOutButton.trailingAnchor.constraint(greaterThanOrEqualTo: self.subscribeButton.leadingAnchor, constant: 20)
-        //        ])
         
         NSLayoutConstraint.activate([
             self.tableView.topAnchor.constraint(equalTo: self.deleteTypeButton.bottomAnchor, constant: 20),

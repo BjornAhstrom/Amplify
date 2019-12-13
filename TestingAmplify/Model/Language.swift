@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Type {
+struct Language {
     let id: String?
     let type: String?
 }

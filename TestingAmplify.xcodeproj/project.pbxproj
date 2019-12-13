@@ -8,11 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1E04A7D523994BA8003A19AA /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 1E04A7D423994BA8003A19AA /* awsconfiguration.json */; };
-		1E04A7D923994D93003A19AA /* PersonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E04A7D823994D93003A19AA /* PersonTableViewCell.swift */; };
-		1E04A7DC23994DBF003A19AA /* Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E04A7DB23994DBF003A19AA /* Type.swift */; };
+		1E04A7DC23994DBF003A19AA /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E04A7DB23994DBF003A19AA /* Language.swift */; };
 		1E15946223A318E10045A312 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E15946123A318E10045A312 /* ProfileSettingsViewController.swift */; };
+		1E15946523A36CB40045A312 /* PersonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E15946423A36CB40045A312 /* PersonTableViewCell.swift */; };
 		1E1EC08D23A243AB00040FA6 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1EC08C23A243AB00040FA6 /* API.swift */; };
-		1E3C15D0239FB78D0009A73B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3C15CF239FB78D0009A73B /* LoginViewController.swift */; };
 		1E3C15D2239FB79F0009A73B /* SplashScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3C15D1239FB79F0009A73B /* SplashScreenViewController.swift */; };
 		1EE67C4C2398338A004DF2B4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */; };
 		1EE67C4E2398338A004DF2B4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */; };
@@ -26,11 +25,10 @@
 		0B95E92053E51023C3821E9D /* Pods-TestingAmplify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestingAmplify.release.xcconfig"; path = "Target Support Files/Pods-TestingAmplify/Pods-TestingAmplify.release.xcconfig"; sourceTree = "<group>"; };
 		0F577EA5E341513B31B9B212 /* Pods-TestingAmplify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestingAmplify.debug.xcconfig"; path = "Target Support Files/Pods-TestingAmplify/Pods-TestingAmplify.debug.xcconfig"; sourceTree = "<group>"; };
 		1E04A7D423994BA8003A19AA /* awsconfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = awsconfiguration.json; path = ../awsconfiguration.json; sourceTree = "<group>"; };
-		1E04A7D823994D93003A19AA /* PersonTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PersonTableViewCell.swift; path = "../../Library/Mobile Documents/com~apple~CloudDocs/.Trash/TestingAmplify/TestingAmplify/PersonTableViewCell.swift"; sourceTree = "<group>"; };
-		1E04A7DB23994DBF003A19AA /* Type.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Type.swift; sourceTree = "<group>"; };
+		1E04A7DB23994DBF003A19AA /* Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		1E15946123A318E10045A312 /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
+		1E15946423A36CB40045A312 /* PersonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonTableViewCell.swift; sourceTree = "<group>"; };
 		1E1EC08C23A243AB00040FA6 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = API.swift; path = TestingAmplify/Model/API.swift; sourceTree = SOURCE_ROOT; };
-		1E3C15CF239FB78D0009A73B /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		1E3C15D1239FB79F0009A73B /* SplashScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
 		1EE67C482398338A004DF2B4 /* TestingAmplify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestingAmplify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -57,8 +55,9 @@
 		1E04A7DA23994DA2003A19AA /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				1E04A7DB23994DBF003A19AA /* Type.swift */,
+				1E04A7DB23994DBF003A19AA /* Language.swift */,
 				1E1EC08C23A243AB00040FA6 /* API.swift */,
+				1E15946423A36CB40045A312 /* PersonTableViewCell.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -68,7 +67,6 @@
 			children = (
 				1EE67C4F2398338A004DF2B4 /* ViewController.swift */,
 				1E3C15D1239FB79F0009A73B /* SplashScreenViewController.swift */,
-				1E3C15CF239FB78D0009A73B /* LoginViewController.swift */,
 				1E15946123A318E10045A312 /* ProfileSettingsViewController.swift */,
 			);
 			path = ViewControllers;
@@ -100,7 +98,6 @@
 				1E04A7D423994BA8003A19AA /* awsconfiguration.json */,
 				1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */,
 				1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */,
-				1E04A7D823994D93003A19AA /* PersonTableViewCell.swift */,
 				1EE67C542398338D004DF2B4 /* Assets.xcassets */,
 				1EE67C562398338D004DF2B4 /* LaunchScreen.storyboard */,
 				1EE67C592398338D004DF2B4 /* Info.plist */,
@@ -240,13 +237,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1E3C15D0239FB78D0009A73B /* LoginViewController.swift in Sources */,
 				1E15946223A318E10045A312 /* ProfileSettingsViewController.swift in Sources */,
-				1E04A7DC23994DBF003A19AA /* Type.swift in Sources */,
+				1E04A7DC23994DBF003A19AA /* Language.swift in Sources */,
 				1E3C15D2239FB79F0009A73B /* SplashScreenViewController.swift in Sources */,
+				1E15946523A36CB40045A312 /* PersonTableViewCell.swift in Sources */,
 				1EE67C502398338A004DF2B4 /* ViewController.swift in Sources */,
 				1EE67C4C2398338A004DF2B4 /* AppDelegate.swift in Sources */,
-				1E04A7D923994D93003A19AA /* PersonTableViewCell.swift in Sources */,
 				1E1EC08D23A243AB00040FA6 /* API.swift in Sources */,
 				1EE67C4E2398338A004DF2B4 /* SceneDelegate.swift in Sources */,
 			);
