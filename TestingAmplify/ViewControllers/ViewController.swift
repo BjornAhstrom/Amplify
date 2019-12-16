@@ -96,15 +96,17 @@ class ViewController: UIViewController {
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
+        tableView.allowsMultipleSelection = true
         tableView.register(PersonTableViewCell.self, forCellReuseIdentifier: self.cellId)
         
         return tableView
     }()
     
-    
     let cellId: String = "MyCell"
+    let refreshControl = UIRefreshControl()
     
     var timer: DispatchSourceTimer?
+    var isSelected: Bool = false
     var name: String = ""
     var surname: String = ""
     var typeId: String = ""
@@ -148,6 +150,16 @@ class ViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
         
+        
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.backgroundView = refreshControl
+        }
+        
+        
         self.hideKeyBoard()
     }
     
@@ -160,6 +172,13 @@ class ViewController: UIViewController {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateNameAndSurname), name: NSNotification.Name(rawValue: "refreshUserQuery"), object: nil)
+    }
+    
+    @objc func refreshTableView() {
+        print("Refresh")
+        DispatchQueue.main.async {
+            self.runtypeQuery()
+        }
     }
     
     @objc func updateNameAndSurname() {
@@ -317,7 +336,7 @@ class ViewController: UIViewController {
                 return
             }
             print("Query complete.")
-            result?.data?.listUsers?.items?.forEach { ($0?.name ?? "") + " " + ($0?.surname ?? "") }
+//            result?.data?.listUsers?.items?.forEach { ($0?.name ?? "") + " " + ($0?.surname ?? "") }
             
             for res in result?.data?.listUsers?.items ?? [] {
                 DispatchQueue.main.async {
@@ -337,19 +356,29 @@ class ViewController: UIViewController {
             }
             print("Query complete.")
             self.type = []
-            result?.data?.listCodeLanguagess?.items?.forEach { ($0?.id ?? "") + " " + ($0?.type ?? "") }
+//            result?.data?.listCodeLanguagess?.items?.forEach { ($0?.id ?? "") + " " + ($0?.type ?? "") }
+            
+            
+            
             
             DispatchQueue.main.async {
-                for res in (result?.data?.listCodeLanguagess?.items ?? []) {
-                    
-                    let type: Language = Language(id: res?.id, type: res?.type)
-                    self.type.append(type)
+                //                for res in (result?.data?.listCodeLanguagess?.items ?? []) {
+                //                    let type: Language = Language(id: res?.id, type: res?.type)
+                //                    self.type.append(type)
+                
+                result?.data?.listCodeLanguagess?.items?.forEach {
+                    let codeType =  Language(id: ($0?.id)!, type: ($0?.type)!)
+                    self.type.append(codeType)
                 }
+                
                 self.tableView.reloadData()
                 self.removeSpinner()
+                self.refreshControl.endRefreshing()
             }
+            
         }
     }
+
     
     func runSubscribe() {
         do {
@@ -402,6 +431,7 @@ class ViewController: UIViewController {
             }
         })
     }
+    
     
     func setConstraints() {
         NSLayoutConstraint.activate([
@@ -477,10 +507,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let t = type[indexPath.row]
-        
         typeId = t.id ?? ""
+        
         self.mutationLanguageTextField.text = t.type
     }
+    
 }
 
 // MARK: Hide keyboard
