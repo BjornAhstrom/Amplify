@@ -47,7 +47,7 @@ class ViewController: UIViewController {
         textField.clearButtonMode = UITextField.ViewMode.whileEditing
         textField.keyboardType = UIKeyboardType.default
         textField.returnKeyType = UIReturnKeyType.done
-        textField.attributedPlaceholder = NSAttributedString(string: "Code language",
+        textField.attributedPlaceholder = NSAttributedString(string: "Name",
         attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
 //        textField.placeholder = "Code language"
         
@@ -121,7 +121,7 @@ class ViewController: UIViewController {
         
         self.showSignInScreen()
         
-        self.view.backgroundColor = UIColor(displayP3Red: 229, green: 229, blue: 229, alpha: 0.9)
+        self.view.backgroundColor = UIColor(displayP3Red: 243/255, green: 240/255, blue: 240/255, alpha: 1)
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -325,11 +325,15 @@ class ViewController: UIViewController {
             }
             print("Fetching Userinfo")
             self.languages = []
+            self.type = []
             result?.data?.listUsers?.items?.forEach {
                
                 $0?.codeList?.forEach {
                     let langList = Language(id: $0?.id ?? "", type: $0?.type ?? "")
                     self.languages.append(langList)
+                    
+                    let item = CodeLanguagesInput(id: $0?.id ?? "", type: $0?.type ?? "")
+                    self.type.append(item)
                 }
                 
                 let person = Person(id: ($0?.id)!, name: ($0?.name)!, surname:($0?.surname)!, languages: [] )
