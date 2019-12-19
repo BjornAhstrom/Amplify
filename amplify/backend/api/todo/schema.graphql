@@ -12,7 +12,9 @@ type User
   codeList: [codeLanguages]
 }
 
-type codeLanguages @model @auth(rules: [{allow: owner, operations: [create, update, delete, read]}]) {
+type codeLanguages {
   id: ID!
   type: String!
 }
+
+

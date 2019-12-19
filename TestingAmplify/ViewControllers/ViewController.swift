@@ -104,6 +104,7 @@ class ViewController: UIViewController {
     
     let cellId: String = "MyCell"
     let refreshControl = UIRefreshControl()
+    var userId: String = ""
     
     var timer: DispatchSourceTimer?
     var isSelected: Bool = false
@@ -112,14 +113,15 @@ class ViewController: UIViewController {
     var typeId: String = ""
     var appSyncClient: AWSAppSyncClient?
     var discard: Cancellable?
-    var type: [Language] = []
+    var type: [CodeLanguagesInput] = []
+    var languages: [Language] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.showSignInScreen()
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = UIColor(displayP3Red: 229, green: 229, blue: 229, alpha: 0.9)
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -150,8 +152,8 @@ class ViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
         
-        
         refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+//        self.runSubscribe()
         
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
@@ -161,14 +163,14 @@ class ViewController: UIViewController {
         
         
         self.hideKeyBoard()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
         DispatchQueue.main.async {
-            self.runUserQuery()
-            self.runtypeQuery()
+            self.checkUser()
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateNameAndSurname), name: NSNotification.Name(rawValue: "refreshUserQuery"), object: nil)
@@ -177,30 +179,38 @@ class ViewController: UIViewController {
     @objc func refreshTableView() {
         print("Refresh")
         DispatchQueue.main.async {
-            self.runtypeQuery()
+            self.checkUser()
         }
     }
     
     @objc func updateNameAndSurname() {
         DispatchQueue.main.async {
-            self.runUserQuery()
+            self.checkUser()
             self.removeSpinner()
         }
     }
     
     @objc func onMutationTapped() {
-        runCodeLanguagesMutation(language: "\(mutationLanguageTextField.text ?? "")")
+        
+        let uuid = UUID()
+        
+        let mutation = CodeLanguagesInput(id: uuid.uuidString, type: self.mutationLanguageTextField.text ?? "")
+        self.type.append(mutation)
+        self.mutationLanguageTextField.text = ""
+        
+        DispatchQueue.main.async {
+            self.updateMutation()
+        }
     }
     
     @objc func onUpdateButtontapped() {
-        DispatchQueue.main.async {
-            self.runUpdateTypeMutation(id: self.typeId, typeName: self.mutationLanguageTextField.text ?? "")
-        }
+        self.checkUser()
+      
     }
     
     @objc func onDeleteButtonTapped() {
         DispatchQueue.main.async {
-            self.deleteTypeMutation(id: self.typeId)
+//            self.deleteTypeMutation(id: self.typeId)
         }
     }
     
@@ -269,11 +279,11 @@ class ViewController: UIViewController {
             self.removeSpinner()
         })
     }
-    func runUpdateTypeMutation(id: String, typeName: String) {
-        self.showSpinner(onView: self.view)
+    
+    func createMutation() {
+        let createMutation = CreateUserInput(name: "" , surname: "", codeList: [])
         
-        let updateMutation = UpdateCodeLanguagesInput(id: id, type: typeName)
-        appSyncClient?.perform(mutation: UpdateCodeLanguagesMutation(input: updateMutation)) {(result, error) in
+        appSyncClient?.perform(mutation: CreateUserMutation(input: createMutation)) {(result, error) in
             
             if let error = error as? AWSAppSyncClientError {
                 print("Error occurred: \(error.localizedDescription )")
@@ -283,37 +293,17 @@ class ViewController: UIViewController {
                 return
             }
             print("Mutation complete.")
-        }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(700)) {
-            self.mutationLanguageTextField.text = ""
-            self.runtypeQuery()
+            self.checkUser()
         }
     }
     
-    func deleteTypeMutation(id: String) {
-        self.showSpinner(onView: self.view)
+    func updateMutation() {
+        var mutationInput = UpdateUserInput(id: userId)
+        print(userId)
         
-        let deleteMutation = DeleteCodeLanguagesInput(id: id)
-        appSyncClient?.perform(mutation: DeleteCodeLanguagesMutation(input: deleteMutation)) {(result, error) in
-            if let error = error as? AWSAppSyncClientError {
-                print("Error occurred: \(error.localizedDescription )")
-            }
-            if let resultError = result?.errors {
-                print("Error saving the item on server: \(resultError)")
-            }
-            print("Delete complete.")
-        }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(700)) {
-            self.mutationLanguageTextField.text = ""
-            self.runtypeQuery()
-        }
-    }
-    
-    func runCodeLanguagesMutation(language: String) {
-        self.showSpinner(onView: self.view)
-        
-        let mutationInput = CreateCodeLanguagesInput(type: language)
-        appSyncClient?.perform(mutation: CreateCodeLanguagesMutation(input: mutationInput)) {(result, error) in
+        mutationInput.codeList = self.type
+        appSyncClient?.perform(mutation: UpdateUserMutation(input: mutationInput)) {(result, error) in
+            
             if let error = error as? AWSAppSyncClientError {
                 print("Error occurred: \(error.localizedDescription )")
             }
@@ -322,116 +312,38 @@ class ViewController: UIViewController {
                 return
             }
             print("Mutation complete.")
-        }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(700)) {
-            self.mutationLanguageTextField.text = ""
-            self.runtypeQuery()
+            self.checkUser()
         }
     }
     
-    func runUserQuery() {
-        appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
-            if error != nil {
-                print(error?.localizedDescription ?? "")
+    func checkUser(){
+        // Check if userinfo exists
+        appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch){ (result, error) in
+            if error != nil{
+                print(error?.localizedDescription ?? "error fetching")
                 return
             }
-            print("Query complete.")
-//            result?.data?.listUsers?.items?.forEach { ($0?.name ?? "") + " " + ($0?.surname ?? "") }
-            
-            for res in result?.data?.listUsers?.items ?? [] {
-                DispatchQueue.main.async {
-                    self.nameTextLabel.text = res?.name
-                    self.surnameTextLabel.text = res?.surname
-                    self.removeSpinner()
+            print("Fetching Userinfo")
+            self.languages = []
+            result?.data?.listUsers?.items?.forEach {
+               
+                $0?.codeList?.forEach {
+                    let langList = Language(id: $0?.id ?? "", type: $0?.type ?? "")
+                    self.languages.append(langList)
                 }
+                
+                let person = Person(id: ($0?.id)!, name: ($0?.name)!, surname:($0?.surname)!, languages: [] )
+
+                self.userId = person.id
+                self.nameTextLabel.text = person.name
+                self.surnameTextLabel.text = person.surname
             }
-        }
-    }
-    
-    func runtypeQuery() {
-        appSyncClient?.fetch(query: ListCodeLanguagessQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
-            if error != nil {
-                print(error?.localizedDescription ?? "")
-                return
-            }
-            print("Query complete.")
-            self.type = []
-//            result?.data?.listCodeLanguagess?.items?.forEach { ($0?.id ?? "") + " " + ($0?.type ?? "") }
-            
-            
-            
-            
             DispatchQueue.main.async {
-                //                for res in (result?.data?.listCodeLanguagess?.items ?? []) {
-                //                    let type: Language = Language(id: res?.id, type: res?.type)
-                //                    self.type.append(type)
-                
-                result?.data?.listCodeLanguagess?.items?.forEach {
-                    let codeType =  Language(id: ($0?.id)!, type: ($0?.type)!)
-                    self.type.append(codeType)
-                }
-                
                 self.tableView.reloadData()
-                self.removeSpinner()
                 self.refreshControl.endRefreshing()
             }
-            
         }
     }
-
-    
-    func runSubscribe() {
-        do {
-            discard = try appSyncClient?.subscribe(subscription: OnCreateUserSubscription(owner: AWSMobileClient.default().identityId ?? ""), resultHandler: {(result, transaction, error) in
-                if let result = result {
-                    print("CreateTodo subscription data:" + (result.data?.onCreateUser?.name ?? "") )
-                } else if let error = error {
-                    print(error.localizedDescription)
-                }
-            })
-            print("Subscribed to CreateTodo Mutations.")
-        } catch {
-            print("Error starting subscription.")
-        }
-    }
-    
-    func optimisticCreateTodo(input: CreateUserInput, query:ListUsersQuery){
-        let createTodoInput = CreateUserInput(name: input.name, surname: input.surname)
-        let createTodoMutation = CreateUserMutation(input: createTodoInput)
-        let UUID = NSUUID().uuidString
-        
-        self.appSyncClient?.perform(mutation: createTodoMutation, optimisticUpdate: { (transaction) in
-            do {
-                try transaction?.update(query: query) { (data: inout ListUsersQuery.Data) in
-                    data.listUsers?.items?.append(ListUsersQuery.Data.ListUser.Item.init(id: UUID, name: input.name, surname: input.surname))
-                }
-            } catch {
-                print("Error updating cache with optimistic response for \(createTodoInput)")
-            }
-        }, resultHandler: { (result, error) in
-            if let result = result {
-                print("Added Todo Response from service: \(String(describing: result.data?.createUser?.name))")
-                
-                //Now remove the outdated entry in cache from optimistic write
-                let _ = self.appSyncClient?.store?.withinReadWriteTransaction { transaction in
-                    try transaction.update(query: ListUsersQuery())
-                    { (data: inout ListUsersQuery.Data) in
-                        var pos = -1, counter = 0
-                        for item in (data.listUsers?.items!)! {
-                            if item?.id == UUID {
-                                pos = counter
-                                continue
-                            }; counter += 1
-                        }
-                        if pos != -1 { data.listUsers?.items?.remove(at: pos) }
-                    }
-                }
-            } else if let error = error {
-                print("Error adding Todo: \(error.localizedDescription)")
-            }
-        })
-    }
-    
     
     func setConstraints() {
         NSLayoutConstraint.activate([
@@ -487,7 +399,7 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return type.count
+        return languages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -495,62 +407,51 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             fatalError()
         }
         
-        let t = type[indexPath.row]
+        let t = languages[indexPath.row]
         
         cell.backgroundColor = .clear
         cell.textLabel?.adjustsFontSizeToFitWidth = true
         
-        cell.setTextToLabels(type: "\(indexPath.row + 1): \(t.type ?? "")")
+        cell.setTextToLabels(type: "\(indexPath.row + 1): \(t.type)")
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let t = type[indexPath.row]
-        typeId = t.id ?? ""
-        
-        self.mutationLanguageTextField.text = t.type
-    }
-    
-}
-
-// MARK: Hide keyboard
-extension UIViewController {
-    func hideKeyBoard() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dissmissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func dissmissKeyboard() {
-        view.endEditing(true)
-    }
-}
-
-var vSpinner : UIView?
-
-// UIActivityIndicator
-extension UIViewController {
-    func showSpinner(onView : UIView) {
-        let spinnerView = UIView.init(frame: onView.bounds)
-        spinnerView.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
-        let ai = UIActivityIndicatorView.init(style: .whiteLarge)
-        ai.startAnimating()
-        ai.center = spinnerView.center
-        
-        DispatchQueue.main.async {
-            spinnerView.addSubview(ai)
-            onView.addSubview(spinnerView)
+        if languages.count != 0 {
+            let person = languages[indexPath.row]
+            
+            typeId = person.id
+            goToProfileController(userId: person.id, userName: person.type)
+        } else {
+            return
         }
         
-        vSpinner = spinnerView
+        
+        
+       
     }
     
-    func removeSpinner() {
-        DispatchQueue.main.async {
-            vSpinner?.removeFromSuperview()
-            vSpinner = nil
-        }
+    func goToProfileController(userId: String, userName: String) {
+        let profileController = ProfileViewController()
+        profileController.userId = userId
+        profileController.userName = userName
+        
+        self.navigationController?.pushViewController(profileController, animated: true)
     }
+    
+    func openFaceTime() {
+        
+        let sms: String = "sms:%@"          //"sms:+46736482006&body=Hello Abc How are You I am ios developer."
+        let strURL: String = sms.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        UIApplication.shared.open(URL.init(string: strURL)!, options: [:], completionHandler: nil)
+    }
+    
+    // "sms:%@"
+    // "tel:%@"
+    // "mailto:%@"
+    // "facetime:%@"
+    // "https://stackoverflow.com" Safari
 }
+
 

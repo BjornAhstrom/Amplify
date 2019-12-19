@@ -7,8 +7,25 @@
 //
 
 import Foundation
+import AWSMobileClient
+import AWSAppSync
 
-struct Language {
-    let id: String?
-    let type: String?
+class Language: CustomStringConvertible, Codable {
+   
+    static func == (lhs: Language, rhs: Language) -> Bool {
+        return lhs.type == rhs.type
+    }
+    
+    static func < (lhs: Language, rhs: Language) -> Bool {
+        return lhs.type < rhs.type
+    }
+    
+    let id: GraphQLID!
+    let type: String
+    var description: String { return type }
+    
+    init(id: GraphQLID, type: String) {
+        self.id = id
+        self.type = type
+    }
 }

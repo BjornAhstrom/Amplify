@@ -11,7 +11,6 @@ mutation CreateUser(
     codeList {
       id
       type
-      owner
     }
   }
 }
@@ -27,7 +26,6 @@ mutation UpdateUser(
     codeList {
       id
       type
-      owner
     }
   }
 }
@@ -43,37 +41,6 @@ mutation DeleteUser(
     codeList {
       id
       type
-      owner
     }
-  }
-}
-mutation CreateCodeLanguages(
-  $input: CreateCodeLanguagesInput!
-  $condition: ModelcodeLanguagesConditionInput
-) {
-  createCodeLanguages(input: $input, condition: $condition) {
-    id
-    type
-    owner
-  }
-}
-mutation UpdateCodeLanguages(
-  $input: UpdateCodeLanguagesInput!
-  $condition: ModelcodeLanguagesConditionInput
-) {
-  updateCodeLanguages(input: $input, condition: $condition) {
-    id
-    type
-    owner
-  }
-}
-mutation DeleteCodeLanguages(
-  $input: DeleteCodeLanguagesInput!
-  $condition: ModelcodeLanguagesConditionInput
-) {
-  deleteCodeLanguages(input: $input, condition: $condition) {
-    id
-    type
-    owner
   }
 }

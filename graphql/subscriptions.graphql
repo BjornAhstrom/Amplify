@@ -8,7 +8,6 @@ subscription OnCreateUser($owner: String!) {
     codeList {
       id
       type
-      owner
     }
   }
 }
@@ -21,7 +20,6 @@ subscription OnUpdateUser($owner: String!) {
     codeList {
       id
       type
-      owner
     }
   }
 }
@@ -34,28 +32,6 @@ subscription OnDeleteUser($owner: String!) {
     codeList {
       id
       type
-      owner
     }
-  }
-}
-subscription OnCreateCodeLanguages($owner: String!) {
-  onCreateCodeLanguages(owner: $owner) {
-    id
-    type
-    owner
-  }
-}
-subscription OnUpdateCodeLanguages($owner: String!) {
-  onUpdateCodeLanguages(owner: $owner) {
-    id
-    type
-    owner
-  }
-}
-subscription OnDeleteCodeLanguages($owner: String!) {
-  onDeleteCodeLanguages(owner: $owner) {
-    id
-    type
-    owner
   }
 }

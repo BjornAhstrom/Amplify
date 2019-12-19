@@ -66,21 +66,23 @@ class ProfileSettingsViewController: UIViewController {
         button.backgroundColor = .gray
         button.setTitleColor(.white, for: .normal)
         button.setTitleColor(.systemGray2, for: .highlighted)
+        button.setTitle("Update", for: .normal)
+        button.addTarget(self, action: #selector(onUpdateButtonPressed), for: .touchUpInside)
         
         return button
     }()
-    
-    var saveButton: UIButton = {
-        let button = UIButton()
-        button.layer.borderColor = UIColor.white.cgColor
-        button.layer.borderWidth = 3
-        button.layer.cornerRadius = 8
-        button.backgroundColor = .gray
-        button.setTitleColor(.white, for: .normal)
-        button.setTitleColor(.systemGray2, for: .highlighted)
-        
-        return button
-    }()
+//
+//    var saveButton: UIButton = {
+//        let button = UIButton()
+//        button.layer.borderColor = UIColor.white.cgColor
+//        button.layer.borderWidth = 3
+//        button.layer.cornerRadius = 8
+//        button.backgroundColor = .gray
+//        button.setTitleColor(.white, for: .normal)
+//        button.setTitleColor(.systemGray2, for: .highlighted)
+//
+//        return button
+//    }()
     
     var cancelButton: UIButton = {
         let button = UIButton()
@@ -96,6 +98,8 @@ class ProfileSettingsViewController: UIViewController {
         return button
     }()
     
+    var userId: String = ""
+    
     var appSyncClient: AWSAppSyncClient?
     var viewController: ViewController?
     
@@ -108,7 +112,7 @@ class ProfileSettingsViewController: UIViewController {
         surnameTextField.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         updateButton.translatesAutoresizingMaskIntoConstraints = false
-        saveButton.translatesAutoresizingMaskIntoConstraints = false
+//        saveButton.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(uiView)
         uiView.addSubview(upperTextLabel)
@@ -116,7 +120,7 @@ class ProfileSettingsViewController: UIViewController {
         uiView.addSubview(surnameTextField)
         uiView.addSubview(cancelButton)
         uiView.addSubview(updateButton)
-        uiView.addSubview(saveButton)
+//        uiView.addSubview(saveButton)
         
         view.backgroundColor = .init(white: 0, alpha: 0.5)
         
@@ -128,40 +132,15 @@ class ProfileSettingsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        runUserQuery()
+        self.checkUser()
     }
     
-    func runUserQuery() {
-        appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch) {(result, error) in
-            if error != nil {
-                print(error?.localizedDescription ?? "")
-                return
-            }
-            print("Query complete.")
-            result?.data?.listUsers?.items?.forEach { ($0?.name ?? "") + " " + ($0?.surname ?? "") }
-            
-            for res in result?.data?.listUsers?.items ?? [] {
-                self.nameTextField.text = res?.name
-                self.surnameTextField.text = res?.surname
-            }
-            
-            if self.nameTextField.text != "" || self.surnameTextField.text != "" {
-                self.saveButton.isHidden = true
-                self.updateButton.setTitle("Update", for: .normal)
-                self.updateButton.addTarget(self, action: #selector(self.onUpdateButtonPressed), for: .touchUpInside)
-            }
-            else if self.nameTextField.text == "" && self.surnameTextField.text == "" {
-                self.updateButton.isHidden = true
-                self.saveButton.setTitle("Save", for: .normal)
-                self.saveButton.addTarget(self, action: #selector(self.onSaveButtonPressed), for: .touchUpInside)
-            }
-        }
-    }
-    
-    func runMutation(name: String, surname: String) {
+    func updateMutation(name: String, surname: String) {
+        var mutationInput = UpdateUserInput(id: self.userId)
         
-        let mutationInput = CreateUserInput(id: AWSMobileClient.default().identityId ?? "", name: name, surname: surname)
-        appSyncClient?.perform(mutation: CreateUserMutation(input: mutationInput)) {(result, error) in
+        mutationInput.name = name
+        mutationInput.surname = surname
+        appSyncClient?.perform(mutation: UpdateUserMutation(input: mutationInput)) {(result, error) in
             
             if let error = error as? AWSAppSyncClientError {
                 print("Error occurred: \(error.localizedDescription )")
@@ -171,21 +150,26 @@ class ProfileSettingsViewController: UIViewController {
                 return
             }
             print("Mutation complete.")
+            self.checkUser()
         }
     }
     
-    func runUpdateUserMutation(name: String, surname: String) {
-        let updateMutation = UpdateUserInput(id: AWSMobileClient.default().identityId ?? "", name: name, surname: surname)
-        appSyncClient?.perform(mutation: UpdateUserMutation(input: updateMutation)) {(result, error) in
-            
-            if let error = error as? AWSAppSyncClientError {
-                print("Error occurred: \(error.localizedDescription )")
-            }
-            if let resultError = result?.errors {
-                print("Error saving the item on server: \(resultError)")
+    func checkUser(){
+        print("Aboiut to check if userinfo exists")
+        appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch){ (result, error) in
+            if error != nil{
+                print(error?.localizedDescription ?? "error fetching")
                 return
             }
-            print("Mutation complete.")
+            print("Fetching Userinfo")
+            result?.data?.listUsers?.items?.forEach {
+                
+                let person = Person(id: ($0?.id)!, name: ($0?.name)!, surname:($0?.surname)!, languages: [] )
+                
+                self.userId = person.id
+                self.nameTextField.text = person.name
+                self.surnameTextField.text = person.surname
+            }
         }
     }
     
@@ -233,13 +217,13 @@ class ProfileSettingsViewController: UIViewController {
             updateButton.bottomAnchor.constraint(equalTo: uiView.bottomAnchor, constant: -20)
         ])
         
-        NSLayoutConstraint.activate([
-            saveButton.widthAnchor.constraint(equalToConstant: 100),
-            saveButton.heightAnchor.constraint(equalToConstant: 40),
-            saveButton.leadingAnchor.constraint(greaterThanOrEqualTo: cancelButton.trailingAnchor),
-            saveButton.trailingAnchor.constraint(equalTo: uiView.trailingAnchor, constant: -20),
-            saveButton.bottomAnchor.constraint(equalTo: uiView.bottomAnchor, constant: -20)
-        ])
+//        NSLayoutConstraint.activate([
+//            saveButton.widthAnchor.constraint(equalToConstant: 100),
+//            saveButton.heightAnchor.constraint(equalToConstant: 40),
+//            saveButton.leadingAnchor.constraint(greaterThanOrEqualTo: cancelButton.trailingAnchor),
+//            saveButton.trailingAnchor.constraint(equalTo: uiView.trailingAnchor, constant: -20),
+//            saveButton.bottomAnchor.constraint(equalTo: uiView.bottomAnchor, constant: -20)
+//        ])
     }
     
     @objc func onCancelButtonPressed() {
@@ -249,7 +233,7 @@ class ProfileSettingsViewController: UIViewController {
     @objc func onUpdateButtonPressed() {
         print("Update")
         self.showSpinner(onView: self.view)
-        self.runUpdateUserMutation(name: self.nameTextField.text ?? "", surname: self.surnameTextField.text ?? "")
+        self.updateMutation(name: self.nameTextField.text ?? "", surname: self.surnameTextField.text ?? "")
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(1000)) {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshUserQuery"), object: nil, userInfo: nil)
@@ -258,17 +242,17 @@ class ProfileSettingsViewController: UIViewController {
         }
     }
     
-    @objc func onSaveButtonPressed() {
-        print("Save")
-        self.showSpinner(onView: self.view)
-        self.runMutation(name: self.nameTextField.text ?? "", surname: self.surnameTextField.text ?? "")
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(1000)) {
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshUserQuery"), object: nil, userInfo: nil)
-            self.view.removeFromSuperview()
-            self.removeSpinner()
-        }
-    }
+//    @objc func onSaveButtonPressed() {
+//        print("Save")
+//        self.showSpinner(onView: self.view)
+//        self.runMutation(name: self.nameTextField.text ?? "", surname: self.surnameTextField.text ?? "")
+//
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(1000)) {
+//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshUserQuery"), object: nil, userInfo: nil)
+//            self.view.removeFromSuperview()
+//            self.removeSpinner()
+//        }
+//    }
     
 }
 

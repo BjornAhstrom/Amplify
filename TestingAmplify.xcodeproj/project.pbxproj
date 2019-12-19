@@ -9,10 +9,14 @@
 /* Begin PBXBuildFile section */
 		1E04A7D523994BA8003A19AA /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 1E04A7D423994BA8003A19AA /* awsconfiguration.json */; };
 		1E04A7DC23994DBF003A19AA /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E04A7DB23994DBF003A19AA /* Language.swift */; };
+		1E0F858C23A75D5700CB8E2E /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0F858B23A75D5700CB8E2E /* Person.swift */; };
+		1E0F859423A7F66200CB8E2E /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0F859323A7F66200CB8E2E /* API.swift */; };
+		1E0F859723AA01DC00CB8E2E /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0F859623AA01DC00CB8E2E /* ActivityIndicator.swift */; };
+		1E0F859923AA024E00CB8E2E /* HideKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0F859823AA024E00CB8E2E /* HideKeyboard.swift */; };
 		1E15946223A318E10045A312 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E15946123A318E10045A312 /* ProfileSettingsViewController.swift */; };
 		1E15946523A36CB40045A312 /* PersonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E15946423A36CB40045A312 /* PersonTableViewCell.swift */; };
-		1E1EC08D23A243AB00040FA6 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1EC08C23A243AB00040FA6 /* API.swift */; };
 		1E3C15D2239FB79F0009A73B /* SplashScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3C15D1239FB79F0009A73B /* SplashScreenViewController.swift */; };
+		1E56900E23AA68BA00F44F89 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E56900D23AA68BA00F44F89 /* ProfileViewController.swift */; };
 		1EE67C4C2398338A004DF2B4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */; };
 		1EE67C4E2398338A004DF2B4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */; };
 		1EE67C502398338A004DF2B4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE67C4F2398338A004DF2B4 /* ViewController.swift */; };
@@ -26,10 +30,14 @@
 		0F577EA5E341513B31B9B212 /* Pods-TestingAmplify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestingAmplify.debug.xcconfig"; path = "Target Support Files/Pods-TestingAmplify/Pods-TestingAmplify.debug.xcconfig"; sourceTree = "<group>"; };
 		1E04A7D423994BA8003A19AA /* awsconfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = awsconfiguration.json; path = ../awsconfiguration.json; sourceTree = "<group>"; };
 		1E04A7DB23994DBF003A19AA /* Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
+		1E0F858B23A75D5700CB8E2E /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		1E0F859323A7F66200CB8E2E /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = SOURCE_ROOT; };
+		1E0F859623AA01DC00CB8E2E /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
+		1E0F859823AA024E00CB8E2E /* HideKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideKeyboard.swift; sourceTree = "<group>"; };
 		1E15946123A318E10045A312 /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
 		1E15946423A36CB40045A312 /* PersonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonTableViewCell.swift; sourceTree = "<group>"; };
-		1E1EC08C23A243AB00040FA6 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = API.swift; path = TestingAmplify/Model/API.swift; sourceTree = SOURCE_ROOT; };
 		1E3C15D1239FB79F0009A73B /* SplashScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
+		1E56900D23AA68BA00F44F89 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		1EE67C482398338A004DF2B4 /* TestingAmplify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestingAmplify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,11 +63,20 @@
 		1E04A7DA23994DA2003A19AA /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				1E04A7DB23994DBF003A19AA /* Language.swift */,
-				1E1EC08C23A243AB00040FA6 /* API.swift */,
 				1E15946423A36CB40045A312 /* PersonTableViewCell.swift */,
+				1E0F858B23A75D5700CB8E2E /* Person.swift */,
+				1E04A7DB23994DBF003A19AA /* Language.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		1E0F859523AA01A900CB8E2E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				1E0F859623AA01DC00CB8E2E /* ActivityIndicator.swift */,
+				1E0F859823AA024E00CB8E2E /* HideKeyboard.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		1E15946323A318FC0045A312 /* ViewControllers */ = {
@@ -68,6 +85,7 @@
 				1EE67C4F2398338A004DF2B4 /* ViewController.swift */,
 				1E3C15D1239FB79F0009A73B /* SplashScreenViewController.swift */,
 				1E15946123A318E10045A312 /* ProfileSettingsViewController.swift */,
+				1E56900D23AA68BA00F44F89 /* ProfileViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -93,9 +111,11 @@
 		1EE67C4A2398338A004DF2B4 /* TestingAmplify */ = {
 			isa = PBXGroup;
 			children = (
+				1E0F859523AA01A900CB8E2E /* Extensions */,
 				1E04A7DA23994DA2003A19AA /* Model */,
 				1E15946323A318FC0045A312 /* ViewControllers */,
 				1E04A7D423994BA8003A19AA /* awsconfiguration.json */,
+				1E0F859323A7F66200CB8E2E /* API.swift */,
 				1EE67C4B2398338A004DF2B4 /* AppDelegate.swift */,
 				1EE67C4D2398338A004DF2B4 /* SceneDelegate.swift */,
 				1EE67C542398338D004DF2B4 /* Assets.xcassets */,
@@ -237,13 +257,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E0F859923AA024E00CB8E2E /* HideKeyboard.swift in Sources */,
 				1E15946223A318E10045A312 /* ProfileSettingsViewController.swift in Sources */,
 				1E04A7DC23994DBF003A19AA /* Language.swift in Sources */,
 				1E3C15D2239FB79F0009A73B /* SplashScreenViewController.swift in Sources */,
 				1E15946523A36CB40045A312 /* PersonTableViewCell.swift in Sources */,
 				1EE67C502398338A004DF2B4 /* ViewController.swift in Sources */,
+				1E56900E23AA68BA00F44F89 /* ProfileViewController.swift in Sources */,
 				1EE67C4C2398338A004DF2B4 /* AppDelegate.swift in Sources */,
-				1E1EC08D23A243AB00040FA6 /* API.swift in Sources */,
+				1E0F859723AA01DC00CB8E2E /* ActivityIndicator.swift in Sources */,
+				1E0F858C23A75D5700CB8E2E /* Person.swift in Sources */,
+				1E0F859423A7F66200CB8E2E /* API.swift in Sources */,
 				1EE67C4E2398338A004DF2B4 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
