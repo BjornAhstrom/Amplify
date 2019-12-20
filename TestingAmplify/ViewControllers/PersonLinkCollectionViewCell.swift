@@ -1,5 +1,5 @@
 //
-//  LinkCollectionViewCell.swift
+//  PersonLinkCollectionViewCell.swift
 //  TestingAmplify
 //
 //  Created by Björn Åhström on 2019-12-19.
@@ -8,9 +8,9 @@
 
 import UIKit
 
-class LinkCollectionViewCell: UICollectionViewCell {
+class PersonLinkCollectionViewCell: UICollectionViewCell {
     
-    var imageView: UIImageView = {
+   var imageView: UIImageView = {
         var image = UIImageView()
         image.image = UIImage(named: "dummy") ?? UIImage()
         image.contentMode = .scaleAspectFit
@@ -45,10 +45,10 @@ class LinkCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             self.imageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
             self.imageView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
-            self.imageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 25),
-            self.imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 25),
-            self.imageView.trailingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: -25),
-            self.imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -25)
+            self.imageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 1),
+            self.imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 1),
+            self.imageView.trailingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: -1),
+            self.imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -1)
         ])
     }
 }

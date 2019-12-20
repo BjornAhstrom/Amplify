@@ -21,6 +21,7 @@ class ProfileViewController: UIViewController {
         return image
     }()
     
+    
     var nameLabel: UILabel = {
         let label = UILabel()
         label.backgroundColor = .clear
@@ -30,16 +31,18 @@ class ProfileViewController: UIViewController {
         return label
     }()
     
+    
     var phoneNumberLabel: UILabel = {
         let label = UILabel()
         label.backgroundColor = .white
         label.layer.cornerRadius = 20
         label.layer.masksToBounds = true
         label.textColor = .black
-        label.text = "+46701234567"
+        label.text = " ✆ +46701234567"
         
         return label
     }()
+    
     
     var mailLabel: UILabel = {
         let label = UILabel()
@@ -47,18 +50,21 @@ class ProfileViewController: UIViewController {
         label.layer.cornerRadius = 20
         label.layer.masksToBounds = true
         label.textColor = .black
-        label.text = "mail@mail.com"
+        label.text = " ✉︎  mail@mail.com"
         
         return label
     }()
     
+    
     lazy var flowLayout:UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         layout.itemSize = CGSize(width: 80, height: 80) //layout.itemSize.width*6
         
         return layout
     }()
+    
     
     lazy var collectionView: UICollectionView = {
         let view = UICollectionView(frame: CGRect.zero, collectionViewLayout: self.flowLayout)
@@ -69,10 +75,12 @@ class ProfileViewController: UIViewController {
         return view
     }()
     
+    
     let myCell: String = "MyCell"
     var userId: String = ""
     var userName: String = ""
     var links: [Link] = []
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,9 +88,9 @@ class ProfileViewController: UIViewController {
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         
-        let mockData = addMockLinks()
+//        let mockData = MockData.addMockLinks()
         
-        links = mockData
+//        links = mockData
         
         self.profileImage.translatesAutoresizingMaskIntoConstraints = false
         self.nameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -100,6 +108,7 @@ class ProfileViewController: UIViewController {
         
         self.setConstraints()
     }
+    
     
     func setConstraints() {
         NSLayoutConstraint.activate([
@@ -137,8 +146,8 @@ class ProfileViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
         ])
     }
-    
 }
+
 
 // MARK: collection view
 extension ProfileViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -146,6 +155,7 @@ extension ProfileViewController: UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return links.count
     }
+    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.myCell, for: indexPath) as? LinkCollectionViewCell else {
@@ -161,53 +171,86 @@ extension ProfileViewController: UICollectionViewDelegate, UICollectionViewDataS
         cell.setImage(image: link.linkImage ?? UIImage())
         return cell
     }
+    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            cell.contentView.backgroundColor = .lightGray
+        }
+    }
     
-//    func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
-//        return true
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-//        let device = devices.remove(at: sourceIndexPath.item)
-//        devices.insert(device, at: destinationIndexPath.item)
-//    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedImage = links[indexPath.row]
+        
+        if selectedImage.name == "sms" {
+            openDeepLink()
+        }
+        
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            cell.contentView.backgroundColor = nil
+        }
+    }
+    
+    
+    //    func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
+    //        return true
+    //    }
+    //
+    //    func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    //        let device = devices.remove(at: sourceIndexPath.item)
+    //        devices.insert(device, at: destinationIndexPath.item)
+    //    }
+    
+    
+    func openDeepLink() {
+        
+        let sms: String = "sms:%@"          //"sms:+46736482006&body=Hello Abc How are You I am ios developer."
+        let strURL: String = sms.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        UIApplication.shared.open(URL.init(string: strURL)!, options: [:], completionHandler: nil)
+    }
 }
 
+// "sms:%@"
+// "tel:%@"
+// "mailto:%@"
+// "facetime:%@"
+// "https://stackoverflow.com" Safari
+
+
 // MARK: Mock data
-extension ProfileViewController {
+extension UIViewController {
     
-    func addMockLinks() -> [Link] {
-        var links: [Link] = []
-        
-        let email = Link(linkImage:  UIImage(named: "email"))
-        links.append(email)
-        let facebook = Link(linkImage: UIImage(named: "facebook"))
-        links.append(facebook)
-        let facetime = Link(linkImage: UIImage(named: "facetime"))
-        links.append(facetime)
-        let instagram = Link(linkImage: UIImage(named: "instagram"))
-        links.append(instagram)
-        let linkedin = Link(linkImage: UIImage(named: "linkedin"))
-        links.append(linkedin)
-        let phone = Link(linkImage: UIImage(named: "phone"))
-        links.append(phone)
-        let pinterest = Link(linkImage: UIImage(named: "pinterest"))
-        links.append(pinterest)
-        let skype = Link(linkImage: UIImage(named: "skype"))
-        links.append(skype)
-        let sms = Link(linkImage: UIImage(named: "sms"))
-        links.append(sms)
-        let snapshat = Link(linkImage: UIImage(named: "snapshat"))
-        links.append(snapshat)
-        let soundcloud = Link(linkImage: UIImage(named: "soundcloud"))
-        links.append(soundcloud)
-        let tumblr = Link(linkImage: UIImage(named: "tumblr"))
-        links.append(tumblr)
-        let twitter = Link(linkImage: UIImage(named: "twitter"))
-        links.append(twitter)
-        let whatsapp = Link(linkImage: UIImage(named: "whatsapp"))
-        links.append(whatsapp)
-        
-        return links
-    }
+//    func addMockLinks() -> [Link] {
+//        var links: [Link] = []
+//
+//        let email = Link(linkImage:  UIImage(named: "email"), name: "email")
+//        links.append(email)
+//        let facebook = Link(linkImage: UIImage(named: "facebook"), name: "facebook")
+//        links.append(facebook)
+//        let facetime = Link(linkImage: UIImage(named: "facetime"), name: "facetime")
+//        links.append(facetime)
+//        let instagram = Link(linkImage: UIImage(named: "instagram"), name: "instagram")
+//        links.append(instagram)
+//        let linkedin = Link(linkImage: UIImage(named: "linkedin"), name: "linkedin")
+//        links.append(linkedin)
+//        let phone = Link(linkImage: UIImage(named: "phone"), name: "phone")
+//        links.append(phone)
+//        let pinterest = Link(linkImage: UIImage(named: "pinterest"), name: "pinterest")
+//        links.append(pinterest)
+//        let skype = Link(linkImage: UIImage(named: "skype"), name: "skype")
+//        links.append(skype)
+//        let sms = Link(linkImage: UIImage(named: "sms"), name: "sms")
+//        links.append(sms)
+//        let snapshat = Link(linkImage: UIImage(named: "snapshat"), name: "snapshat")
+//        links.append(snapshat)
+//        let soundcloud = Link(linkImage: UIImage(named: "soundcloud"), name: "soundcloud")
+//        links.append(soundcloud)
+//        let tumblr = Link(linkImage: UIImage(named: "tumblr"), name: "tumblr")
+//        links.append(tumblr)
+//        let twitter = Link(linkImage: UIImage(named: "twitter"), name: "twitter")
+//        links.append(twitter)
+//        let whatsapp = Link(linkImage: UIImage(named: "whatsapp"), name: "whatsapp")
+//        links.append(whatsapp)
+//
+//        return links
+//    }
     
 }

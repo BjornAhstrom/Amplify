@@ -20,7 +20,8 @@ class SplashScreenViewController: UIViewController {
         
         return splashView
     }()
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,10 +29,11 @@ class SplashScreenViewController: UIViewController {
         splashScreen.translatesAutoresizingMaskIntoConstraints = false
         
         self.view.addSubview(self.splashScreen)
-
+        
         setConstraints()
     }
-
+    
+    
     func setConstraints() {
         NSLayoutConstraint.activate([
             self.splashScreen.widthAnchor.constraint(equalToConstant: 255),

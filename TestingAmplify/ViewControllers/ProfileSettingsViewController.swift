@@ -20,6 +20,7 @@ class ProfileSettingsViewController: UIViewController {
         return view
     }()
     
+    
     var upperTextLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -31,6 +32,7 @@ class ProfileSettingsViewController: UIViewController {
         
         return label
     }()
+    
     
     var nameTextField: UITextField = {
         let textField = UITextField()
@@ -45,6 +47,7 @@ class ProfileSettingsViewController: UIViewController {
         return textField
     }()
     
+    
     var surnameTextField: UITextField = {
         let textField = UITextField()
         textField.backgroundColor = .clear
@@ -57,6 +60,7 @@ class ProfileSettingsViewController: UIViewController {
         
         return textField
     }()
+    
     
     var updateButton: UIButton = {
         let button = UIButton()
@@ -71,18 +75,7 @@ class ProfileSettingsViewController: UIViewController {
         
         return button
     }()
-//
-//    var saveButton: UIButton = {
-//        let button = UIButton()
-//        button.layer.borderColor = UIColor.white.cgColor
-//        button.layer.borderWidth = 3
-//        button.layer.cornerRadius = 8
-//        button.backgroundColor = .gray
-//        button.setTitleColor(.white, for: .normal)
-//        button.setTitleColor(.systemGray2, for: .highlighted)
-//
-//        return button
-//    }()
+    
     
     var cancelButton: UIButton = {
         let button = UIButton()
@@ -98,10 +91,12 @@ class ProfileSettingsViewController: UIViewController {
         return button
     }()
     
+    
     var userId: String = ""
     
     var appSyncClient: AWSAppSyncClient?
     var viewController: ViewController?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,7 +107,6 @@ class ProfileSettingsViewController: UIViewController {
         surnameTextField.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         updateButton.translatesAutoresizingMaskIntoConstraints = false
-//        saveButton.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(uiView)
         uiView.addSubview(upperTextLabel)
@@ -120,7 +114,6 @@ class ProfileSettingsViewController: UIViewController {
         uiView.addSubview(surnameTextField)
         uiView.addSubview(cancelButton)
         uiView.addSubview(updateButton)
-//        uiView.addSubview(saveButton)
         
         view.backgroundColor = .init(white: 0, alpha: 0.5)
         
@@ -130,10 +123,12 @@ class ProfileSettingsViewController: UIViewController {
         setConstraints()
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.checkUser()
     }
+    
     
     func updateMutation(name: String, surname: String) {
         var mutationInput = UpdateUserInput(id: self.userId)
@@ -154,8 +149,8 @@ class ProfileSettingsViewController: UIViewController {
         }
     }
     
+    
     func checkUser(){
-        print("Aboiut to check if userinfo exists")
         appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch){ (result, error) in
             if error != nil{
                 print(error?.localizedDescription ?? "error fetching")
@@ -172,6 +167,7 @@ class ProfileSettingsViewController: UIViewController {
             }
         }
     }
+    
     
     func setConstraints() {
         NSLayoutConstraint.activate([
@@ -216,19 +212,13 @@ class ProfileSettingsViewController: UIViewController {
             updateButton.trailingAnchor.constraint(equalTo: uiView.trailingAnchor, constant: -20),
             updateButton.bottomAnchor.constraint(equalTo: uiView.bottomAnchor, constant: -20)
         ])
-        
-//        NSLayoutConstraint.activate([
-//            saveButton.widthAnchor.constraint(equalToConstant: 100),
-//            saveButton.heightAnchor.constraint(equalToConstant: 40),
-//            saveButton.leadingAnchor.constraint(greaterThanOrEqualTo: cancelButton.trailingAnchor),
-//            saveButton.trailingAnchor.constraint(equalTo: uiView.trailingAnchor, constant: -20),
-//            saveButton.bottomAnchor.constraint(equalTo: uiView.bottomAnchor, constant: -20)
-//        ])
     }
+    
     
     @objc func onCancelButtonPressed() {
         self.view.removeFromSuperview()
     }
+    
     
     @objc func onUpdateButtonPressed() {
         print("Update")
@@ -241,18 +231,5 @@ class ProfileSettingsViewController: UIViewController {
             self.removeSpinner()
         }
     }
-    
-//    @objc func onSaveButtonPressed() {
-//        print("Save")
-//        self.showSpinner(onView: self.view)
-//        self.runMutation(name: self.nameTextField.text ?? "", surname: self.surnameTextField.text ?? "")
-//
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(1000)) {
-//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshUserQuery"), object: nil, userInfo: nil)
-//            self.view.removeFromSuperview()
-//            self.removeSpinner()
-//        }
-//    }
-    
 }
 

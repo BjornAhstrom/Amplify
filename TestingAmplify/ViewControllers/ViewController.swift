@@ -19,10 +19,11 @@ class ViewController: UIViewController {
         label.font = .boldSystemFont(ofSize: 25)
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.text = "Name"
+        label.text = " Name"
         
         return label
     }()
+    
     
     var surnameTextLabel: UILabel = {
         let label = UILabel()
@@ -31,10 +32,11 @@ class ViewController: UIViewController {
         label.font = .boldSystemFont(ofSize: 25)
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.text = "Surname"
+        label.text = " Surname"
         
         return label
     }()
+    
     
     var mutationLanguageTextField: UITextField = {
         let textField = UITextField()
@@ -47,12 +49,12 @@ class ViewController: UIViewController {
         textField.clearButtonMode = UITextField.ViewMode.whileEditing
         textField.keyboardType = UIKeyboardType.default
         textField.returnKeyType = UIReturnKeyType.done
-        textField.attributedPlaceholder = NSAttributedString(string: "Name",
-        attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
-//        textField.placeholder = "Code language"
+        textField.attributedPlaceholder = NSAttributedString(string: " Name",
+                                                             attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
         
         return textField
     }()
+    
     
     var mutationButton: UIButton = {
         let button = UIButton()
@@ -67,6 +69,7 @@ class ViewController: UIViewController {
         return button
     }()
     
+    
     var updateTypeButton: UIButton = {
         let button = UIButton()
         button.layer.borderColor = UIColor.black.cgColor
@@ -79,6 +82,7 @@ class ViewController: UIViewController {
         
         return button
     }()
+    
     
     var deleteTypeButton: UIButton = {
         let button = UIButton()
@@ -93,14 +97,17 @@ class ViewController: UIViewController {
         return button
     }()
     
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
-        tableView.allowsMultipleSelection = true
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.separatorStyle = .none
         tableView.register(PersonTableViewCell.self, forCellReuseIdentifier: self.cellId)
         
         return tableView
     }()
+    
     
     let cellId: String = "MyCell"
     let refreshControl = UIRefreshControl()
@@ -115,6 +122,7 @@ class ViewController: UIViewController {
     var discard: Cancellable?
     var type: [CodeLanguagesInput] = []
     var languages: [Language] = []
+    var links: [Link] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,7 +161,6 @@ class ViewController: UIViewController {
         appSyncClient = appDelegate.appSyncClient
         
         refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
-//        self.runSubscribe()
         
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
@@ -161,10 +168,12 @@ class ViewController: UIViewController {
             tableView.backgroundView = refreshControl
         }
         
-        
         self.hideKeyBoard()
         
+        let l = MockData.addMockLinks()
+        self.links = l
     }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -176,6 +185,7 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateNameAndSurname), name: NSNotification.Name(rawValue: "refreshUserQuery"), object: nil)
     }
     
+    
     @objc func refreshTableView() {
         print("Refresh")
         DispatchQueue.main.async {
@@ -183,12 +193,14 @@ class ViewController: UIViewController {
         }
     }
     
+    
     @objc func updateNameAndSurname() {
         DispatchQueue.main.async {
             self.checkUser()
             self.removeSpinner()
         }
     }
+    
     
     @objc func onMutationTapped() {
         
@@ -203,20 +215,23 @@ class ViewController: UIViewController {
         }
     }
     
+    
     @objc func onUpdateButtontapped() {
         self.checkUser()
-      
     }
+    
     
     @objc func onDeleteButtonTapped() {
         DispatchQueue.main.async {
-//            self.deleteTypeMutation(id: self.typeId)
+            //            self.deleteTypeMutation(id: self.typeId)
         }
     }
+    
     
     @objc func onSignOutButtonTapped() {
         signOut()
     }
+    
     
     @objc func onEditButtonTapped() {
         let popup = ProfileSettingsViewController()
@@ -225,6 +240,7 @@ class ViewController: UIViewController {
         self.view.addSubview(popup.view)
         popup.didMove(toParent: self)
     }
+    
     
     func showSignInScreen() {
         AWSMobileClient.default().initialize { (userState, error) in
@@ -258,6 +274,7 @@ class ViewController: UIViewController {
         }
     }
     
+    
     func signOut() {
         self.showSpinner(onView: self.view)
         
@@ -280,6 +297,7 @@ class ViewController: UIViewController {
         })
     }
     
+    
     func createMutation() {
         let createMutation = CreateUserInput(name: "" , surname: "", codeList: [])
         
@@ -297,9 +315,9 @@ class ViewController: UIViewController {
         }
     }
     
+    
     func updateMutation() {
         var mutationInput = UpdateUserInput(id: userId)
-        print(userId)
         
         mutationInput.codeList = self.type
         appSyncClient?.perform(mutation: UpdateUserMutation(input: mutationInput)) {(result, error) in
@@ -316,8 +334,8 @@ class ViewController: UIViewController {
         }
     }
     
+    
     func checkUser(){
-        // Check if userinfo exists
         appSyncClient?.fetch(query: ListUsersQuery(), cachePolicy: .returnCacheDataAndFetch){ (result, error) in
             if error != nil{
                 print(error?.localizedDescription ?? "error fetching")
@@ -327,7 +345,7 @@ class ViewController: UIViewController {
             self.languages = []
             self.type = []
             result?.data?.listUsers?.items?.forEach {
-               
+                
                 $0?.codeList?.forEach {
                     let langList = Language(id: $0?.id ?? "", type: $0?.type ?? "")
                     self.languages.append(langList)
@@ -337,7 +355,7 @@ class ViewController: UIViewController {
                 }
                 
                 let person = Person(id: ($0?.id)!, name: ($0?.name)!, surname:($0?.surname)!, languages: [] )
-
+                
                 self.userId = person.id
                 self.nameTextLabel.text = person.name
                 self.surnameTextLabel.text = person.surname
@@ -348,6 +366,7 @@ class ViewController: UIViewController {
             }
         }
     }
+    
     
     func setConstraints() {
         NSLayoutConstraint.activate([
@@ -394,16 +413,33 @@ class ViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             self.tableView.topAnchor.constraint(equalTo: self.deleteTypeButton.bottomAnchor, constant: 20),
-            self.tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
-            self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
-            self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -10)
+            self.tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 1),
+            self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -1),
+            self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -1)
         ])
     }
 }
 
+// MARK: View controller
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return languages.count
+    }
+    
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+           return 1
+       }
+
+    
+       func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+           return 44
+       }
+    
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 10.0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -411,51 +447,86 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             fatalError()
         }
         
-        let t = languages[indexPath.row]
+        let person = languages[indexPath.row]
         
-        cell.backgroundColor = .clear
+        if person.id == "633CBC6E-16E4-4F41-91F8-EB65BEC55629" {
+            let links1 = MockData.addMockLinks()
+            cell.links = links1
+            
+        } else if person.id == "57B425B4-3C25-4891-A98B-F52E120AD573" {
+            let links2 = MockData.addMockLinks1()
+            cell.links = links2
+            
+        } else if person.id == "CC8F4BED-AF86-461C-A704-094635B497FF" {
+            let links3 = MockData.addMockLinks2()
+            cell.links = links3
+            
+        } else if person.id == "E17EDAC2-BDDF-402F-B521-08171608C643" {
+            let links4 = MockData.addMockLinks3()
+            cell.links = links4
+        } else if person.id == "D4527963-CA31-404F-9CDB-E645D1B0F17C" {
+            let links5 = MockData.addMockLinks4()
+            cell.links = links5
+        } else {
+            cell.links = self.links
+        }
+        
+        
+        cell.backgroundColor = .white
+        cell.layer.masksToBounds = true
         cell.textLabel?.adjustsFontSizeToFitWidth = true
         
-        cell.setTextToLabels(type: "\(indexPath.row + 1): \(t.type)")
+        cell.setupCell(name: person.type)
+        
         
         return cell
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         if languages.count != 0 {
             let person = languages[indexPath.row]
             
+            if person.id == "633CBC6E-16E4-4F41-91F8-EB65BEC55629" {
+                let links1 = MockData.addMockLinks()
+                
+                goToProfileController(userId: person.id, userName: person.type, links: links1)
+                
+            } else if person.id == "57B425B4-3C25-4891-A98B-F52E120AD573" {
+                let links2 = MockData.addMockLinks1()
+                goToProfileController(userId: person.id, userName: person.type, links: links2)
+                
+            } else if person.id == "CC8F4BED-AF86-461C-A704-094635B497FF" {
+                let links3 = MockData.addMockLinks2()
+                goToProfileController(userId: person.id, userName: person.type, links: links3)
+                
+            } else if person.id == "E17EDAC2-BDDF-402F-B521-08171608C643" {
+                let links4 = MockData.addMockLinks3()
+                goToProfileController(userId: person.id, userName: person.type, links: links4)
+                
+            } else if person.id == "D4527963-CA31-404F-9CDB-E645D1B0F17C" {
+                let links5 = MockData.addMockLinks4()
+                goToProfileController(userId: person.id, userName: person.type, links: links5)
+                
+            } else {
+                goToProfileController(userId: person.id, userName: person.type, links: self.links)
+            }
+            
             typeId = person.id
-            goToProfileController(userId: person.id, userName: person.type)
+            
         } else {
             return
         }
-        
-        
-        
-       
     }
     
-    func goToProfileController(userId: String, userName: String) {
+    
+    func goToProfileController(userId: String, userName: String, links: [Link]) {
         let profileController = ProfileViewController()
         profileController.userId = userId
         profileController.userName = userName
+        profileController.links = links
         
         self.navigationController?.pushViewController(profileController, animated: true)
     }
-    
-    func openFaceTime() {
-        
-        let sms: String = "sms:%@"          //"sms:+46736482006&body=Hello Abc How are You I am ios developer."
-        let strURL: String = sms.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        UIApplication.shared.open(URL.init(string: strURL)!, options: [:], completionHandler: nil)
-    }
-    
-    // "sms:%@"
-    // "tel:%@"
-    // "mailto:%@"
-    // "facetime:%@"
-    // "https://stackoverflow.com" Safari
 }
-
-

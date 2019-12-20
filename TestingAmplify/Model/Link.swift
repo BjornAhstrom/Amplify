@@ -10,4 +10,5 @@ import UIKit
 
 struct Link {
     let linkImage: UIImage?
+    let name: String?
 }
